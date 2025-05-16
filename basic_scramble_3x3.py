@@ -4,11 +4,11 @@ import random
 faces = ['U', 'D', 'L', 'R', 'F', 'B']
 modifiers = ['', "'", '2']
 
-def generate_scramble():
+def generate_scramble(moves = 18):
     scramble = []
     prev_face = None
 
-    for _ in range(18):  # Generate a 18-move scramble (apparently 18 is good)
+    for _ in range(moves):
         while True:
             face = random.choice(faces)
             if face != prev_face:  # Avoid consecutive moves on the same face
