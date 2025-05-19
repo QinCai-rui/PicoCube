@@ -38,6 +38,8 @@ After about `90 minutes` of hard grind, behold -- the `PiCubeZero`. Okay, im not
 
 The process was pretty straightforward, since there is sooo much documentation on the Internet about the modules I was/am after. I fed the completed program into `GPT-4.1` to check for any mistakes and suggestions, and good -- no big mistakes, but a few changes were made, such as the font selection thing I do _not_ know how it works, or if it's supposed to work... 
 
+----------
+
 ### Update 2/3
 
 Another `50 -ish minutes` later and I (sort of, and the stupid `GPT-4.1` helped me **a lot**) made a version of PiCube, called "PiCubePico", since it is based on the Raspberry Pi Pico MCU. Check it out here on Wokwi Simulator: <https://wokwi.com/projects/431347174552980481>
@@ -45,3 +47,10 @@ Another `50 -ish minutes` later and I (sort of, and the stupid `GPT-4.1` helped 
 Screenshot: ![image](https://github.com/user-attachments/assets/c9dac93d-f04c-47e7-b45a-9a12dfbac601)
 
 _(pls ignore the inconsistency between the OLED screen and the 7-seg display. The simulator is **extremely** laggy, with one second simulated being 15+ secs in real life)_
+
+---------
+
+### Update 3/4
+
+Spent like `1.5 hours` creating the BOM, and it is not even complete (yet). 
+Here is the BOM for RasPiCube - PiCubeZero: <https://github.com/QinCai-rui/RasPiCube/blob/PiCubeZero/BOM.md>
