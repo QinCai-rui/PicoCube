@@ -34,7 +34,7 @@ Another challenge was to display the real-time timer, which every rubiks cube ti
 
 ### Update 1/3
 
-After about **90 minutes** of hard grind, behold -- the `PiCubeZero`. Okay, im not even sure if it works or not, since I don't have the necessary hardware to build the project physically. That also means there is no pictures to share :((.
+After about **1.5 hours** of hard grind, behold -- the `PiCubeZero`. Okay, im not even sure if it works or not, since I don't have the necessary hardware to build the project physically. That also means there is no pictures to share :((.
 
 The process was pretty straightforward, since there is sooo much documentation on the Internet about the modules I was/am after. I fed the completed program into `GPT-4.1` to check for any mistakes and suggestions, and good -- no big mistakes, but a few changes were made, such as the font selection thing I do _not_ know how it works, or if it's supposed to work... 
 
@@ -63,7 +63,7 @@ Here is the BOM for RasPiCube - PiCubeZero: <https://github.com/QinCai-rui/RasPi
 
 Just updated the RasPiCube - PiCubeZero program to use a Waveshare 2-inch IPS LCD Display (ST7789, 240x320), instead of a tiny SSD1306 128x64 OLED display. This time GPT-4.1 helped me a lot when updating the program since I made quite a lot of mistakes. 
 
-Time spent this session: ~ 
+Time spent this session: ~**1.5 hours**
 
 ### Update 2/7
 
@@ -81,3 +81,5 @@ Here are the posts:
 [post2](https://bulkmemorycards.com/identifying-counterfeit-microsd-cards/)
 
 Maybe just don't buy uSD cards from AliExpress... Buy them on Amazon instead ig.
+
+Time spent this session: ~**1 hour**
