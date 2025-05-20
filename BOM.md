@@ -17,12 +17,12 @@
 
 ## Additional Components & Accessories
 
-| Component                | Description                           | Quantity | Est. Price      | Purpose                                  |
-|--------------------------|---------------------------------------|----------|-----------------|-------------------------------------------|
-| Resistors                | 220Ω for RGB LED (x3)                 | 3        | $0.50           | Current limiting for RGB LED              |
-| Jumper Wires             | Female-to-Female, Male-to-Female      | 1 pack   | $3.00-$7.00     | Connecting components                     |
-| Power Supply             | 5V/2.5A USB power supply              | 1        | $5.00-$10.00    | Powering the Raspberry Pi                 |
-| Project Case             | 3D printed or plastic box             | 1        | $5.00-$15.00    | Housing the electronics                   |
+| Component                | Description                           | Quantity | Link                                                                                                                      | Est. Price      | Purpose                                  |
+|--------------------------|---------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------|-----------------|-------------------------------------------|
+| Resistors                | 220Ω for RGB LED (x3)                 | 3        | [AliExpress](https://www.aliexpress.com/item/1005008494728485.html) | $5.58 USD (600x) | Current limiting for RGB LED              |
+| Jumper Wires             | Female-to-Female, Male-to-Female      | 1 pack   | [AliExpress](https://www.aliexpress.com/item/1005003641187997.html)                                                                                                                         | $0.99     | Connecting components                     |
+| Power Bank             | 5V/2.5A USB power supply              | 1        | [Amazon](https://www.amazon.com/Magnetic-portable-Compatible-MagneticBattery-PowerCore/dp/B0CP2RG37X)                                                                                                                         | $5.00-$10.00    | Powering the Raspberry Pi                 |
+| Project Case             | 3D printed or plastic box             | 1        | —                                                                                                                         | $5.00-$15.00    | Housing the electronics                   |
 
 ---
 
@@ -37,10 +37,10 @@
 
 ---
 
-
 ## Notes
 
 - Use only 1 RGB LED from the pack of 100.
+- Use only 3 resistors from the pack of 600.
 - The microSD card is more than sufficient for OS and solve log storage.
 - All links and prices were last verified as of 2025-05-19.
 
