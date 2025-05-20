@@ -40,7 +40,7 @@ The process was pretty straightforward, since there is sooo much documentation o
 
 ----------
 
-### Update 2/3
+### Update 2/4
 
 Another `50 -ish minutes` later and I (sort of, and the stupid `GPT-4.1` helped me **a lot**) made a version of PiCube, called "PiCubePico", since it is based on the Raspberry Pi Pico MCU. Check it out here on Wokwi Simulator: <https://wokwi.com/projects/431347174552980481>
 
@@ -50,7 +50,15 @@ _(pls ignore the inconsistency between the OLED screen and the 7-seg display. Th
 
 ---------
 
-### Update 3/4
+### Update 3/5
 
 Spent like `1.5 hours` creating the BOM, and it is not even complete (yet). 
 Here is the BOM for RasPiCube - PiCubeZero: <https://github.com/QinCai-rui/RasPiCube/blob/PiCubeZero/BOM.md>
+
+----------
+
+## 20/5/25
+
+### Update 1/6
+
+Just updated the RasPiCube - PiCubeZero program to use a Waveshare 2-inch IPS LCD Display (ST7789, 240x320), instead of a tiny SSD1306 128x64 OLED display. This time GPT-4.1 helped me a lot when updating the program since I made quite a lot of mistakes. 
