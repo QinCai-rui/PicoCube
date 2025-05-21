@@ -6,7 +6,7 @@
 
 | Component | Description | Quantity | Link | Est. Price | Purpose |
 |--------------------------|---------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------|-----------------|-------------------------------------|
-| Raspberry Pi Zero 2 W | 1GHz quad-core ARM CPU with WiFi | 1 | [AliExpress](https://www.aliexpress.com/item/1005007982832720.html) | $14.55 | Main controller/computer for the timer |
+| Raspberry Pi Zero 2 W | 1GHz quad-core ARM CPU with WiFi | 1 | [AliExpress](https://www.aliexpress.com/item/1005007982832720.html) | $22.87 | Main controller/computer for the timer |
 | 2-inch IPS LCD Display | 240x320 ST7789, Waveshare compatible | 1 | [Amazon](https://www.amazon.com/LCD-2inch-Module-Compatible-Display/dp/B0DRS9YQCK) | $14.40 | Scramble/time/statistics display |
 | 6-Digit 7-Segment Display| TM1637-compatible LED display module | 1 | [AliExpress](https://www.aliexpress.com/item/1005001582129952.html) | $0.99 | Real-time/final time display |
 | TTP223 Touch Sensor | Capacitive touch sensor | 2 | [AliExpress](https://www.aliexpress.com/item/1005006153014582.html) | $0.99 | Start/stop timer input |
@@ -25,9 +25,9 @@
 | Protoboard | 630 holes | 1 | [AliExpress](https://www.aliexpress.com/item/1005007204514719.html) | $2.06 | To solder the electronics on |
 | USB Cable | Data, USB 2.0, 1m | 1 | [AliExpress](https://www.aliexpress.com/item/1005007504624576.html) | $0.99 | For data transfer and Pi first-boot configuration |
 | Foam Tape | Double Sided Adhesive Foam Tape - 1.5cm, 5m | 1 | [AliExpress](https://www.aliexpress.com/item/1005006891100106.html?) | $0.99 | Temporary mounting and fixing electronics |
-| LiPo Battery | 803040 3.7V 1000mAh | 1 | [AliExpress](https://www.aliexpress.com/item/1005007252723935.html) | $5.32 | Powering the electronics |
+| Li-ion Battery | 18650 3.7V 3500mAh | 1 | [AliExpress](https://www.aliexpress.com/item/1005008078553867.html) | $4.98 | Powering the electronics |
 | Battery Charger & Booster | Charging Circuit Board Step Up Boost Power Supply Module; 2xUSB-A output | 1 | [AliExpress](https://www.aliexpress.com/item/1005007457573822.html) | $0.59 | Charging and converting battery to 5V |
-
+| 18650 Holder | Holder with cable | 1 | [AliExpress](https://www.aliexpress.com/item/1005006089547043.html) | $0.99 | Holder for 18650 battery
 ---
 
 ## Wiring Reference
