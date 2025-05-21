@@ -21,11 +21,12 @@
 |--------------------------|---------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------|-----------------|-------------------------------------------|
 | Resistors | 220Ω for RGB LED (x3) | 3 | [AliExpress](https://www.aliexpress.com/item/1005008494728485.html) | $5.58 (600x) | Current limiting for RGB LED |
 | Jumper Wires | Female-to-Female, Male-to-Female, Male-to-Male | 1 pack | [AliExpress](https://www.aliexpress.com/item/1005003641187997.html) | $0.99 | Connecting components |
-| Power Bank | 5V/2.5A+ USB power supply | 1 | - | $5.00-$10.00 | Powering the Raspberry Pi |
 | Large Breadboard | 630 holes | 1 | [AliExpress](https://www.aliexpress.com/item/1005007085965483.html) | $1.54 | Housing the electronics |
 | Protoboard | 630 holes | 1 | [AliExpress](https://www.aliexpress.com/item/1005007204514719.html) | $2.06 | To solder the electronics on |
 | USB Cable | Data, USB 2.0, 1m | 1 | [AliExpress](https://www.aliexpress.com/item/1005007504624576.html) | $0.99 | For data transfer and Pi first-boot configuration |
-| Foam Tape | Double Sided Adhesive Foam Tape - 1.5cm, 5m | 1 | [AliExpress](https://www.aliexpress.com/item/1005006891100106.html?) | $0.99 | Temporary mounting and fixing electronics
+| Foam Tape | Double Sided Adhesive Foam Tape - 1.5cm, 5m | 1 | [AliExpress](https://www.aliexpress.com/item/1005006891100106.html?) | $0.99 | Temporary mounting and fixing electronics |
+| LiPo Battery | 803040 3.7V 1000mAh | 1 | [AliExpress](https://www.aliexpress.com/item/1005007252723935.html) | $5.32 | Powering the electronics |
+| Battery Charger & Booster | Charging Circuit Board Step Up Boost Power Supply Module; 2xUSB-A output | 1 | [AliExpress](https://www.aliexpress.com/item/1005007457573822.html) | $0.59 | Charging and converting battery to 5V |
 
 ---
 
