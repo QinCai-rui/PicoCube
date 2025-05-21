@@ -1,3 +1,10 @@
+---
+title: "RasPiCube"
+author: "@QinCai"
+description: "A Raspberry Pi powered Rubiks cube timer and scramble generator"
+created_at: "2025-05-16"
+---
+
 ## 16/5/25
 
 ### Update 1/1
