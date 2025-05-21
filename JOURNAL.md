@@ -65,6 +65,8 @@ Just updated the RasPiCube - PiCubeZero program to use a Waveshare 2-inch IPS LC
 
 Time spent this session: ~**1.5 hours**
 
+-------------
+
 ### Update 2/7
 
 For this session, I worked a lot on the [PiCubeZero's BOM](https://github.com/QinCai-rui/RasPiCube/blob/PiCubeZero/BOM.md). I tried comparing the items I need on Aliexpress and Amazon. I almost got scammed by (likely) a scam on Aliexpress. [Link](https://www.aliexpress.com/item/1005008269997334.html)
@@ -83,3 +85,20 @@ Here are the posts:
 Maybe just don't buy uSD cards from AliExpress... Buy them on Amazon instead ig.
 
 Time spent this session: ~**1 hour**
+
+--------------
+
+### Update 3/8 
+
+Since I couldn't find one single NeoPixel (as in 1 LED), I decided to switch to a common-cathode RGB LED. Simple! Also saved a bit of cash....
+
+Time spent this session: **25 minutes**
+
+------------
+
+## 21/5/25
+
+### Update 1/9
+
+Updated the BOM to include all needed parts. This project is gonna cost a lot with a Pi 0 2WH, a battery, and a screen... (about $100 USD atm).
+
