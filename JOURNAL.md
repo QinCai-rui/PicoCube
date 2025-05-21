@@ -109,3 +109,8 @@ Time spent this session: **25 minutes**
 
 Updated the BOM to include all needed parts. This project is gonna cost a lot with a Pi 0 2WH, a battery, and a screen... (about $100 USD atm).
 
+<img width="427" alt="Amazon Total" src="https://github.com/user-attachments/assets/e4fbed02-b408-4d9c-90c0-ef2a5e449325" />
+<img width="374" alt="AliExpress Total" src="https://github.com/user-attachments/assets/a159bbc3-0997-4fc1-b7d1-b70e516869e0" />
+
+
+
