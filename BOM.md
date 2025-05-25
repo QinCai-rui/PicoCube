@@ -6,7 +6,7 @@
 
 | Component | Description | Quantity | Link | Est. Price | Purpose |
 |--------------------------|---------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------|-----------------|-------------------------------------|
-| Raspberry Pi Zero 2 W | 1GHz quad-core ARM CPU with WiFi | 1 | [AliExpress](https://www.aliexpress.com/item/1005007982832720.html) | $22.87 | Main controller/computer for the timer |
+| Raspberry Pi Zero 2 WH | 1GHz quad-core ARM CPU with WiFi, BT, and header pins| 1 | [AliExpress](https://www.aliexpress.com/item/1005007982832720.html) | $22.87 | Main controller/computer for the timer |
 | 2-inch IPS LCD Display | 240x320 ST7789, Waveshare compatible | 1 | [Amazon](https://www.amazon.com/LCD-2inch-Module-Compatible-Display/dp/B0DRS9YQCK) | $14.40 | Scramble/time/statistics display |
 | 6-Digit 7-Segment Display| TM1637-compatible LED display module | 1 | [AliExpress](https://www.aliexpress.com/item/1005001582129952.html) | $0.99 | Real-time/final time display |
 | TTP223 Touch Sensor | Capacitive touch sensor | 2 | [AliExpress](https://www.aliexpress.com/item/1005006153014582.html) | $0.99 | Start/stop timer input |
