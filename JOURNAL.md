@@ -112,5 +112,16 @@ Updated the BOM to include all needed parts. This project is gonna cost a lot wi
 <img width="427" alt="Amazon Total" src="https://github.com/user-attachments/assets/e4fbed02-b408-4d9c-90c0-ef2a5e449325" />
 <img width="374" alt="AliExpress Total" src="https://github.com/user-attachments/assets/a159bbc3-0997-4fc1-b7d1-b70e516869e0" />
 
+-----------------
+
+## 2/6/25
+
+### Update 1/10
+
+Update the BOM once again to only include the parts that i need. This brings the cost down to ~$60. See [BOM-needed.md].
+
+![image](https://github.com/user-attachments/assets/0e33619f-2dc4-43c3-b796-6be7972aefd4)
+
+
 
 
