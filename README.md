@@ -23,9 +23,9 @@ RasPiCube is a portable, Raspberry Pi Zero 2 W(H)-powered Rubik's Cube timer and
 
 ## Hardware Components
 
-For a complete list of components and estimated prices, please see [BOM.md](BOM.md).
+For a complete list of components and estimated prices, please see [BOM.md](https://github.com/QinCai-rui/RasPiCube/blob/main/BOM/BOM.md).
 
 ## Circuit Diagram
 
-See [diagram.txt](diagram.txt).
+See [diagram.txt](DIAGRAM/diagram.txt).
 
