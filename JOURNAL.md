@@ -60,7 +60,7 @@ _(pls ignore the inconsistency between the OLED screen and the 7-seg display. Th
 ### Update 3/5
 
 Spent like **1.5 hours** creating the BOM, and it is not even complete (yet). 
-Here is the BOM for RasPiCube - PiCubeZero: <https://github.com/QinCai-rui/RasPiCube/blob/PiCubeZero/BOM.md>
+Here is the [BOM for RasPiCube - PiCubeZero](https://github.com/QinCai-rui/RasPiCube/blob/main/BOM/BOM.md)
 
 ----------
 
@@ -76,7 +76,7 @@ Time spent this session: ~**1.5 hours**
 
 ### Update 2/7
 
-For this session, I worked a lot on the [PiCubeZero's BOM](https://github.com/QinCai-rui/RasPiCube/blob/PiCubeZero/BOM.md). I tried comparing the items I need on Aliexpress and Amazon. I almost got scammed by (likely) a scam on Aliexpress. [Link](https://www.aliexpress.com/item/1005008269997334.html)
+For this session, I worked a lot on the [PiCubeZero's BOM](https://github.com/QinCai-rui/RasPiCube/blob/main/BOM/BOM.md). I tried comparing the items I need on Aliexpress and Amazon. I almost got scammed by (likely) a scam on Aliexpress. [Link](https://www.aliexpress.com/item/1005008269997334.html)
 
 The "Sandian" branded uSD cards look sooo similar to the real "SanDisk" ones.
 
@@ -112,15 +112,27 @@ Updated the BOM to include all needed parts. This project is gonna cost a lot wi
 <img width="427" alt="Amazon Total" src="https://github.com/user-attachments/assets/e4fbed02-b408-4d9c-90c0-ef2a5e449325" />
 <img width="374" alt="AliExpress Total" src="https://github.com/user-attachments/assets/a159bbc3-0997-4fc1-b7d1-b70e516869e0" />
 
+Time spent this session: **30 minutes**
+
 -----------------
 
 ## 2/6/25
 
 ### Update 1/10
 
-Update the BOM once again to only include the parts that i need. This brings the cost down to ~$60. See [BOM-needed.md](BOM-needed.md).
+Update the BOM once again to only include the parts that i need. This brings the cost down to ~$60. See [BOM-needed.md](BOM/BOM-needed.md).
 
 ![image](https://github.com/user-attachments/assets/0e33619f-2dc4-43c3-b796-6be7972aefd4)
+Time spent this session: **20 minutes**
+
+--------------------
+
+### Update 2/11
+
+Cleanned up the repo!! There is nothing more i could say..
+
+Time spent this session: **25 minutes**
+
 
 
 
