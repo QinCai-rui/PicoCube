@@ -118,7 +118,7 @@ Updated the BOM to include all needed parts. This project is gonna cost a lot wi
 
 ### Update 1/10
 
-Update the BOM once again to only include the parts that i need. This brings the cost down to ~$60. See [BOM-needed.md].
+Update the BOM once again to only include the parts that i need. This brings the cost down to ~$60. See [BOM-needed.md](BOM-needed.md).
 
 ![image](https://github.com/user-attachments/assets/0e33619f-2dc4-43c3-b796-6be7972aefd4)
 
