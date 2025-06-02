@@ -9,7 +9,7 @@ FILE_DESCRIPTION(
 /* implementation_level */ '2;1');
 
 FILE_NAME(
-/* name */ 'RayRay Box.step',
+/* name */ 'RasPiCube_Case.step',
 /* time_stamp */ '2025-06-02T17:33:34+12:00',
 /* author */ (''),
 /* organization */ (''),
