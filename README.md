@@ -29,6 +29,22 @@ RasPiCube is a portable, Raspberry Pi Zero 2 W(H)-powered Rubik's Cube timer and
 
 For a complete list of components and estimated prices, please see [BOM.md](https://github.com/QinCai-rui/RasPiCube/blob/main/BOM/BOM.md).
 
+## What’s What (What Each File/Folder Is For)
+
+- **.gitignore** — Tells git which files/folders to ignore (so junk/config files don’t get tracked).
+- **BOM/** — Bill of Materials! All the parts I need and some prices. See this for shopping.
+- **CAD/** — 3D model files for the timer’s case. Print or edit them if you want to make/modify the enclosure.
+  - `RasPiCube_Case.step` — The actual 3D model of the case.
+- **DIAGRAM/** — Circuit diagrams and wiring info.
+  - `diagram.txt` — Text version of the wiring/circuit diagram. (bc I couldn't find footprints/symbol for most of the parts I am using)
+- **JOURNAL.md** — My build log, notes, and what worked/didn’t along the way.
+- **LICENSE** — Legal stuff (open source license details).
+- **README.md** — You’re reading it rn! All the info about the project.
+- **pi02w-rubiks.py** — The main code that runs the timer and scramble generator on the RPi Zero 2 W.
+- **proofOfConcept/** — Early test code and experiments before the main build. These can run on any OS with Python 3 installed. No special hardware needed.
+  - `basic_scramble_3x3.py` — Simple script to generate 3x3 scrambles (terminal version).
+  - `rubiks_terminal.py` — Terminal-based prototype timer/scrambler.
+
 ## Circuit Diagram
 
 See [diagram.txt](DIAGRAM/diagram.txt).
