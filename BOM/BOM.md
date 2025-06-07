@@ -7,7 +7,7 @@
 | Component | Description | Quantity | Link | Est. Price (inc. shipping) | Purpose |
 |--------------------------|---------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------|-----------------|-------------------------------------|
 | Raspberry Pi Zero 2 WH | 1GHz quad-core ARM CPU with WiFi, BT, and header pins| 1 | [AliExpress](https://www.aliexpress.com/item/1005007982832720.html) | $24.93 | Main controller/computer for the timer |
-| 802.11ax USB adapter | WiFi 6, AX1300, dual-band | 1 | [AliExpress](https://www.aliexpress.com/item/32999133595.html) | $10 | 5GHz WiFi 6 networking; our home network does not have working 2.4GHz..... |
+| 802.11ax USB adapter | WiFi 6, mt7921au, dual-band | 1 | [AliExpress](https://www.aliexpress.com/item/1005005935638503.html) | $1.72 | 5GHz WiFi 6 networking; our home network does not have working 2.4GHz..... |
 | 2-inch IPS LCD Display | 240x320 ST7789, Waveshare compatible | 1 | [Amazon](https://www.amazon.com/LCD-2inch-Module-Compatible-Display/dp/B0DRS9YQCK) | $14.40 | Scramble/time/statistics display |
 | 6-Digit 7-Segment Display| TM1637-compatible LED display module | 1 | [AliExpress](https://www.aliexpress.com/item/1005001582129952.html) | $2.64 | Real-time/final time display |
 | TTP223 Touch Sensor | Capacitive touch sensor | 2 | [AliExpress](https://www.aliexpress.com/item/1005006153014582.html) | $1.70 | Start/stop timer input |
