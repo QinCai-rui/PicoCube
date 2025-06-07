@@ -32,9 +32,10 @@
 ## Totals
 
 ### AliExpress
-![image](https://github.com/user-attachments/assets/e6e395db-ea17-484c-a512-5014b0cd4bae)
+![image](https://github.com/user-attachments/assets/8e174ebd-d84e-47e0-a486-5ac5bd13be75)
+![image](https://github.com/user-attachments/assets/c1bb00b0-dd2a-4ccc-b8d8-8565fb3276b0)
 
-US$42.27
+US$46.81
 
 ### Amazon
 ![image](https://github.com/user-attachments/assets/11908611-66c1-485f-bbe5-c52a6a7e3f66)
@@ -42,7 +43,7 @@ US$42.27
 US$16.56
 
 ### Grant Total
-US$58.83 GRAND TOTAL
+US$63.37 GRAND TOTAL
 
 ---
 
