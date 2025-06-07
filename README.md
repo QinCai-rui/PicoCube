@@ -25,6 +25,20 @@ RasPiCube is a portable, Raspberry Pi Zero 2 W(H)-powered Rubik's Cube timer and
 - **Statistics**: Calculates and displays session averages (ao5, ao12)
 - **Battery Powered**: Portable with a 18650 lithium-ion battery
 
+### Case (just a box for now. will modify it after getting the parts and done some measurements)
+
+![image](https://github.com/user-attachments/assets/7346a186-b638-4fc1-b166-17f52ffb6eb9)
+
+### Circuit diagram (in ASCII; it's bad, I know)
+
+I couldn't find footprints/symbols for most of the parts I am using. Sooo.
+[diagram here](https://github.com/QinCai-rui/RasPiCube/blob/main/DIAGRAM/diagram.txt)
+
+### What it will end up looking like
+
+Note: this is a picture taken in Wokwi simulator, with a very early version of this project that (barely) runs on the Raspberry Pi Pico. 
+![Rubik's Cube Timer](https://github.com/user-attachments/assets/c9dac93d-f04c-47e7-b45a-9a12dfbac601)
+
 ## Hardware Components
 
 For a complete list of components and estimated prices, please see [BOM.md](https://github.com/QinCai-rui/RasPiCube/blob/main/BOM/BOM.md).
@@ -36,7 +50,7 @@ For a complete list of components and estimated prices, please see [BOM.md](http
 - **CAD/** — 3D model files for the timer’s case. Print or edit them if you want to make/modify the enclosure.
   - `RasPiCube_Case.step` — The actual 3D model of the case.
 - **DIAGRAM/** — Circuit diagrams and wiring info.
-  - `diagram.txt` — Text version of the wiring/circuit diagram. (bc I couldn't find footprints/symbol for most of the parts I am using)
+  - `diagram.txt` — Text version of the wiring/circuit diagram. (bc I couldn't find footprints/symbols for most of the parts I am using)
 - **JOURNAL.md** — My build log, notes, and what worked/didn’t along the way.
 - **LICENSE** — Legal stuff (open source license details).
 - **README.md** — You’re reading it rn! All the info about the project.
