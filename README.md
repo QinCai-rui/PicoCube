@@ -6,6 +6,10 @@
 
 _NOTE: The image shows demo powered by a Raspberry Pi Pico_
 
+## Why I Made This Project
+
+Honestly, I just wanted a cool timer for solving Rubik’s Cubes—something I could build myself, mess with, and show off to friends at school. The ones you can buy are fine, but making my own with a Raspberry Pi felt way more fun (and gave me an excuse to tinker with hardware and code). Now I’ve got a timer that does exactly what I want, and I learned a ton making it!! And it's portable, too! :)
+
 ## Overview
 
 RasPiCube is a portable, Raspberry Pi Zero 2 W(H)-powered Rubik's Cube timer and scramble generator. This DIY project combines a high-resolution (320x240, pretty high) display, 7-segment timer, touch sensor input, and RGB status indicators to create a timing solution for cubers like myself.
