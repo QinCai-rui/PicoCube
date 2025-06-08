@@ -154,6 +154,8 @@ Added this to my BOM cos I need WiFi. Anyway, very happy with this find!
 
 (surprisingly, this much better wifi adapter only brought up my BOM by about $5. It's prob Aliexpress' Welcome Deal thingy)
 
+_see (BOM)[https://github.com/QinCai-rui/RasPiCube/blob/432650de670bce71bf1978ce57de217eb192d6ab/BOM/BOM-needed.md] for my BOM at the time of writing_
+
 Time spent: **1 hour** (browsing, comparing, reading reviews, dodging dodgy sellers on Ali)
 
 
