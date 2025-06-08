@@ -133,7 +133,28 @@ Cleanned up the repo!! There is nothing more i could say..
 
 Time spent this session: **25 minutes**
 
+-------------------
 
+## 7/6/25
+
+### Update 1/12
+
+Spent **1.5 hours** looking for a better USB WiFi adapter. Ended up finding this one on AliExpress:  
+[FENVI 1800Mbps WiFi 6 USB Adapter Dual Band 2.4G/5Ghz Wireless WiFi Receiver USB 3.0 Dongle Network Card](https://www.aliexpress.com/item/1005005935638503.html)
+
+Turns out, this adapter is actually listed in [morrownr's Linux USB WiFi compatibility list](https://github.com/morrownr/USB-WiFi/blob/main/home/USB_WiFi_Adapters_that_are_supported_with_Linux_in-kernel_drivers.md), so it should work just fine out of the box. It’s the Fenvi FU-AX1800 (uses the mt7921au chipset), which is pretty much plug-and-play on any recent Linux, as long as you’re not running some ancient kernel from the Stone Age (ahem, looking at Raspberry Pi OS, which just migrated to 6.12).
+
+Some random thoughts:
+- mt7921au = good chipset, Linux likes it, no weird drivers, just works (or so i hope).
+- Loads of positive reviews from other Linux nerds online, especially on AliExpress and in that repo.
+- It’s super cheap ($1.72 with Welcome Deal). Not gonna break HC's bank.
+- Just double check you don’t get tricked into buying the Realtek version — only mt7921au is the good one. -- from the repo
+
+Added this to my BOM cos I need WiFi. Anyway, very happy with this find!
+
+(surprisingly, this much better wifi adapter only brought up my BOM by about $5. It's prob Aliexpress' Welcome Deal thingy)
+
+Time spent: **1 hour** (browsing, comparing, reading reviews, dodging dodgy sellers on Ali)
 
 
 
