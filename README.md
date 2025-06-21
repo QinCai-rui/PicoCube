@@ -45,8 +45,8 @@ For a complete list of components and estimated prices, please see [BOM.md](http
 
 ## What’s What (What Each File/Folder Is For)
 
-- **.gitignore** — Tells git which files/folders to ignore (so junk/config files don’t get tracked).
-- **BOM/** — Bill of Materials! All the parts I need and some prices. See this for shopping.
+- **.gitignore** — Tells git which files/folders to ignore (so junk/config and cache files don’t get tracked).
+- **BOM/** — Bill of Materials! All the parts I need and some prices. See this for shopping. (required by Highway)
 - **CAD/** — 3D model files for the timer’s case. Print or edit them if you want to make/modify the enclosure.
   - `RasPiCube_Case.step` — The actual 3D model of the case.
 - **DIAGRAM/** — Circuit diagrams and wiring info.
