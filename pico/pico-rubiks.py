@@ -96,10 +96,16 @@ def display_scramble(scramble):
 def display_timer(time_val, running=True, clear_all=False):
     if clear_all:
         tft.fill(st7789.BLACK)
+    
     timer_str = "{:6.1f}".format(time_val) if running else "{:6.3f}".format(time_val)
     x_timer = max(0, (TFT_WIDTH - font_big.WIDTH * len(timer_str)) // 2)
     y_timer = (TFT_HEIGHT - font_big.HEIGHT) // 2
-    tft.fill_rect(0, y_timer, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
+    
+    timer_width = font_big.WIDTH * len(timer_str)
+    
+    # Only clear the rectangle where the time will be displayed
+    tft.fill_rect(x_timer, y_timer, timer_width, font_big.HEIGHT, st7789.BLACK)
+    
     tft.text(font_big, timer_str, x_timer, y_timer, st7789.GREEN if running else st7789.CYAN)
 
 def avg_of(times, count):
