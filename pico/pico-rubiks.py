@@ -112,6 +112,8 @@ def avg_of(times, count):
     """
     Calculate average of count solves, trimming best and worst for count >= 5
     For a standard Rubik's cube timer, both ao5 and ao12 require trimming.
+    
+    This function is created with assistance from GitHub Copilot
     """
     if len(times) < count:
         return None
