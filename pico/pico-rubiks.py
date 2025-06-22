@@ -9,7 +9,7 @@ import st7789py as st7789
 import vga1_16x32 as font_big
 import vga1_8x16 as font_small
 
-# json processor
+# json processor for the log file
 import ujson
 
 TFT_WIDTH = 240
