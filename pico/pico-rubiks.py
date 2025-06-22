@@ -276,15 +276,23 @@ def timer_control():
     last_touch_time = time.ticks_ms()
     running = True
     first_update = True
+
+    update_interval = 100  # ms, how often to update LCD
+    poll_interval = 10     # ms, how often to poll button
+    last_update = time.ticks_ms()
     while True:
         elapsed = (time.ticks_ms() - timer_start) / 1000
-        display_timer(elapsed, running=True, clear_all=first_update)
-        first_update = False
-        time.sleep_ms(100)
+        now = time.ticks_ms()
+        if time.ticks_diff(now, last_update) >= update_interval:
+            display_timer(elapsed, running=True, clear_all=first_update)
+            first_update = False
+            last_update = now
+        time.sleep_ms(poll_interval)
         if timer_pin.value():
             break
         if any_touch():
             last_touch_time = time.ticks_ms()
+
     final_elapsed = (time.ticks_ms() - timer_start) / 1000
     display_timer(final_elapsed, running=False, clear_all=True)
     while timer_pin.value():
