@@ -14,7 +14,7 @@ import ujson
 
 TFT_WIDTH = 240
 TFT_HEIGHT = 320
-spi = machine.SPI(1, baudrate=40000000, polarity=1, phase=0) # haven;t yet experimented with higher data rates
+spi = machine.SPI(1, baudrate=40000000, polarity=1, phase=0) # haven't yet experimented with higher data rates
 tft = st7789.ST7789(
     spi,
     TFT_WIDTH,
