@@ -1,3 +1,5 @@
+# NOTE: LCD sleep currently not working
+
 import machine
 import time
 import random
