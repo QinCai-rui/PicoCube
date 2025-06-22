@@ -133,6 +133,9 @@ def avg_of(times, count):
     return sum(trimmed) / len(trimmed)
 
 def display_results_and_avgs(latest_time, times, clear_msg=False):
+    """
+    Part of this function is created with assistance from GitHub Copilot
+    """
     tft.fill(st7789.BLACK)
     title = "Solve Results"
     x_title = max(0, (TFT_WIDTH - font_small.WIDTH * len(title)) // 2)
