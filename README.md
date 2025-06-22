@@ -62,4 +62,3 @@ For a complete list of components and estimated prices, please see [BOM.md](http
 ## Circuit Diagram
 
 See [diagram.txt](DIAGRAM/diagram.txt).
-
