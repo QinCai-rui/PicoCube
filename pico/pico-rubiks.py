@@ -305,6 +305,7 @@ def timer_control():
     return final_elapsed
 
 # --- Main loop ---
+# Created with assistance from GitHub Copilot
 solve_times = load_times()
 while True:
     scramble = generate_scramble(20)
