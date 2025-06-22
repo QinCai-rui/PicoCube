@@ -103,7 +103,7 @@ def display_timer(time_val, running=True, clear_all=False):
     if clear_all:
         tft.fill(st7789.BLACK)
     
-    timer_str = "{:6.1f}".format(time_val) if running else "{:6.3f}".format(time_val)
+    timer_str = "{:6.1f}".format(time_val) if running else "{:6.2f}".format(time_val)
     x_timer = max(0, (TFT_WIDTH - font_big.WIDTH * len(timer_str)) // 2)
     y_timer = (TFT_HEIGHT - font_big.HEIGHT) // 2
     
@@ -148,13 +148,13 @@ def display_results_and_avgs(latest_time, times, clear_msg=False):
         x_prompt = max(0, (TFT_WIDTH - font_small.WIDTH * len(prompt)) // 2)
         tft.text(font_small, prompt, x_prompt, TFT_HEIGHT - font_small.HEIGHT - 4, st7789.MAGENTA)
         return
-    s = "Latest: {:.3f}".format(latest_time)
+    s = "Latest: {:.2f}".format(latest_time)
     tft.text(font_small, s, 10, 40, st7789.GREEN)
     y = 60
     tft.text(font_small, "Last 5:", 10, y, st7789.YELLOW)
     for i, entry in enumerate(times[-5:][::-1]):
         t = entry["time"]
-        tft.text(font_small, "{:2d}: {:.3f}".format(len(times)-i, t), 70, y, st7789.WHITE)
+        tft.text(font_small, "{:2d}: {:.2f}".format(len(times)-i, t), 70, y, st7789.WHITE)
         y += font_small.HEIGHT + 2
     y += 10
     
@@ -162,8 +162,8 @@ def display_results_and_avgs(latest_time, times, clear_msg=False):
     ao5 = avg_of(times, 5)
     ao12 = avg_of(times, 12)
     
-    ao5_str = "ao5:  --.--" if ao5 is None else "ao5: {:.3f}".format(ao5)
-    ao12_str = "ao12: --.--" if ao12 is None else "ao12: {:.3f}".format(ao12)
+    ao5_str = "ao5:  --.--" if ao5 is None else "ao5: {:.2f}".format(ao5)
+    ao12_str = "ao12: --.--" if ao12 is None else "ao12: {:.2f}".format(ao12)
     tft.text(font_small, ao5_str, 10, y, st7789.CYAN)
     y += font_small.HEIGHT + 2
     tft.text(font_small, ao12_str, 10, y, st7789.CYAN)
