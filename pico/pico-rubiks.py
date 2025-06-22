@@ -1,9 +1,15 @@
 import machine
 import time
 import random
+
+# screen library
 import st7789py as st7789
+
+# fonts
 import vga1_16x32 as font_big
 import vga1_8x16 as font_small
+
+# json processor
 import ujson
 
 TFT_WIDTH = 240
