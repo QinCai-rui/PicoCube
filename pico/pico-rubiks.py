@@ -316,74 +316,74 @@ def timer_control():
 # Created with assistance from GitHub Copilot
 solve_times = load_times()
 def main():
-    scramble = generate_scramble(20)
-    display_scramble(scramble)
-    timer_val = timer_control()
-    solve_times.append({"time": timer_val, "scramble": scramble})
-    save_times(solve_times)
-    # Wait for tap of GP19 to show results/averages
-    while not next_pin.value():
-        time.sleep_ms(10)
-    while next_pin.value():
-        time.sleep_ms(10)
-    display_results_and_avgs(timer_val, solve_times)
-    # Wait for tap of GP19 (clear) or GP15 (exit)
-    action = wait_for_next_with_results()
-    if action == "exit":
-        continue
-    elif action == "clear":
-        # Are you sure dialog
-        display_are_you_sure()
-        confirm_action = wait_for_confirm_clear()
-        if confirm_action == "clear":
-            solve_times = []
-            clear_times()
-            display_results_and_avgs(0, solve_times, clear_msg=True)
-            # Wait for tap of GP15 to exit cleared screen
-            while not timer_pin.value():
-                time.sleep_ms(10)
-            while timer_pin.value():
-                time.sleep_ms(10)
+    while True:
+        scramble = generate_scramble(20)
+        display_scramble(scramble)
+        timer_val = timer_control()
+        solve_times.append({"time": timer_val, "scramble": scramble})
+        save_times(solve_times)
+        # Wait for tap of GP19 to show results/averages
+        while not next_pin.value():
+            time.sleep_ms(10)
+        while next_pin.value():
+            time.sleep_ms(10)
+        display_results_and_avgs(timer_val, solve_times)
+        # Wait for tap of GP19 (clear) or GP15 (exit)
+        action = wait_for_next_with_results()
+        if action == "exit":
             continue
-        else:
-            # Cancel, redisplay stats
-            display_results_and_avgs(timer_val, solve_times)
-            # Wait again for user input
-            action = wait_for_next_with_results()
-            if action == "exit":
+        elif action == "clear":
+            # Are you sure dialog
+            display_are_you_sure()
+            confirm_action = wait_for_confirm_clear()
+            if confirm_action == "clear":
+                solve_times = []
+                clear_times()
+                display_results_and_avgs(0, solve_times, clear_msg=True)
+                # Wait for tap of GP15 to exit cleared screen
+                while not timer_pin.value():
+                    time.sleep_ms(10)
+                while timer_pin.value():
+                    time.sleep_ms(10)
                 continue
-            # If user hits clear again, repeat confirmation
-            elif action == "clear":
-                display_are_you_sure()
-                confirm_action = wait_for_confirm_clear()
-                if confirm_action == "clear":
-                    solve_times = []
-                    clear_times()
-                    display_results_and_avgs(0, solve_times, clear_msg=True)
-                    while not timer_pin.value():
-                        time.sleep_ms(10)
-                    while timer_pin.value():
-                        time.sleep_ms(10)
+            else:
+                # Cancel, redisplay stats
+                display_results_and_avgs(timer_val, solve_times)
+                # Wait again for user input
+                action = wait_for_next_with_results()
+                if action == "exit":
                     continue
-                else:
-                    display_results_and_avgs(timer_val, solve_times)
-                    while True:
-                        a = wait_for_next_with_results()
-                        if a == "exit":
-                            break
-                        if a == "clear":
-                            display_are_you_sure()
-                            c = wait_for_confirm_clear()
-                            if c == "clear":
-                                solve_times = []
-                                clear_times()
-                                display_results_and_avgs(0, solve_times, clear_msg=True)
-                                while not timer_pin.value():
-                                    time.sleep_ms(10)
-                                while timer_pin.value():
-                                    time.sleep_ms(10)
+                # If user hits clear again, repeat confirmation
+                elif action == "clear":
+                    display_are_you_sure()
+                    confirm_action = wait_for_confirm_clear()
+                    if confirm_action == "clear":
+                        solve_times = []
+                        clear_times()
+                        display_results_and_avgs(0, solve_times, clear_msg=True)
+                        while not timer_pin.value():
+                            time.sleep_ms(10)
+                        while timer_pin.value():
+                            time.sleep_ms(10)
+                        continue
+                    else:
+                        display_results_and_avgs(timer_val, solve_times)
+                        while True:
+                            a = wait_for_next_with_results()
+                            if a == "exit":
                                 break
+                            if a == "clear":
+                                display_are_you_sure()
+                                c = wait_for_confirm_clear()
+                                if c == "clear":
+                                    solve_times = []
+                                    clear_times()
+                                    display_results_and_avgs(0, solve_times, clear_msg=True)
+                                    while not timer_pin.value():
+                                        time.sleep_ms(10)
+                                    while timer_pin.value():
+                                        time.sleep_ms(10)
+                                    break
 
 if __name__ == "__main__":
-    while True:
-        main()
+    main()
