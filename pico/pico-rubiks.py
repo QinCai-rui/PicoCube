@@ -49,14 +49,14 @@ def save_times(times):
         with open(RESULTS_FILE, "w") as f:
             ujson.dump(times, f)
     except Exception as e:
-        pass
+        print(e)
 
 def clear_times():
     try:
         with open(RESULTS_FILE, "w") as f:
             ujson.dump([], f)
     except Exception as e:
-        pass
+        print(e)
 
 def generate_scramble(n_moves=20):
     scramble = []
@@ -118,7 +118,7 @@ def display_timer(time_val, running=True, clear_all=False):
 
 def avg_of(times, count):
     """
-    Calculate average of count solves, trimming best and worst for count >= 5
+    Calculate average of count solves, trimming best and worst results for count >= 5
     For a standard Rubik's cube timer, both ao5 and ao12 require trimming.
     
     This function is created with assistance from GitHub Copilot
@@ -315,7 +315,7 @@ def timer_control():
 # --- Main loop ---
 # Created with assistance from GitHub Copilot
 solve_times = load_times()
-while True:
+def main():
     scramble = generate_scramble(20)
     display_scramble(scramble)
     timer_val = timer_control()
@@ -383,3 +383,7 @@ while True:
                                 while timer_pin.value():
                                     time.sleep_ms(10)
                                 break
+
+if __name__ == "__main__":
+    while True:
+        main()
