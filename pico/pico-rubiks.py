@@ -14,7 +14,7 @@ import vga1_8x16 as font_small
 # json processor for the log file
 import ujson
 
-VERSION = "v1.2.0-1"
+VERSION = "v1.2.0-2"
 
 TFT_WIDTH = 240
 TFT_HEIGHT = 320
@@ -38,21 +38,8 @@ modifiers = ['', "'", '2']
 opposite = {'U':'D', 'D':'U', 'L':'R', 'R':'L', 'F':'B', 'B':'F'}
 
 RESULTS_FILE = "cube_times.json"
+
 '''
-def draw_version():
-    version_str = VERSION
-    # Calculate position: bottom right, padding 2px from edge
-    x = TFT_WIDTH - font_small.WIDTH * len(version_str) - 2
-    y = TFT_HEIGHT - font_small.HEIGHT - 2
-    tft.text(font_small, version_str, x, y, st7789.RED)
-
-def draw_version():
-    version_str = VERSION
-    tft.fill_rect(180, 295, 60, 25, st7789.BLACK)  # Clear a rectangle in the corner
-    x = TFT_WIDTH - font_small.WIDTH * len(version_str) - 5
-    y = TFT_HEIGHT - font_small.HEIGHT - 5
-    tft.text(font_small, version_str, x, y, st7789.RED)'''
-
 def draw_version():
     """ This actually works!!
     yeah ik magic numbers are bad and stuff. stuck with this for now ig
@@ -60,6 +47,27 @@ def draw_version():
     version_str = VERSION
     tft.fill_rect(255, 210, 60, 25, st7789.BLACK)
     tft.text(font_small, version_str, 255, 210, st7789.RED)
+'''
+
+def draw_version():
+    """Draw version in bottom-right corner with proper calculations
+    Based on the coordinates (255, 210) that worked previously
+    
+    This is created with help from GitHub Copilot, using the previous function above"""
+    version_str = VERSION
+    
+    # Calculate version string width
+    version_width = font_small.WIDTH * len(version_str)
+    
+    # Calculate position - preserve the right and bottom offsets that worked
+    x = 255 - (version_width - len("v1.1.0") * font_small.WIDTH)  # Adjust if version is longer than v1.1.0
+    y = 210  # Keep the y position that worked
+    
+    # Clear background area with a bit of padding
+    tft.fill_rect(x-2, y-2, version_width+4, font_small.HEIGHT+4, st7789.BLACK)
+    
+    # Draw version text
+    tft.text(font_small, version_str, x, y, st7789.RED)
 
 def load_times():
     try:
