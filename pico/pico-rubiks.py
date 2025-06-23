@@ -14,6 +14,8 @@ import vga1_8x16 as font_small
 # json processor for the log file
 import ujson
 
+VERSION = "v1.2.0-1"
+
 TFT_WIDTH = 240
 TFT_HEIGHT = 320
 spi = machine.SPI(1, baudrate=40000000, polarity=1, phase=0) # haven't yet experimented with higher data rates
@@ -36,6 +38,28 @@ modifiers = ['', "'", '2']
 opposite = {'U':'D', 'D':'U', 'L':'R', 'R':'L', 'F':'B', 'B':'F'}
 
 RESULTS_FILE = "cube_times.json"
+'''
+def draw_version():
+    version_str = VERSION
+    # Calculate position: bottom right, padding 2px from edge
+    x = TFT_WIDTH - font_small.WIDTH * len(version_str) - 2
+    y = TFT_HEIGHT - font_small.HEIGHT - 2
+    tft.text(font_small, version_str, x, y, st7789.RED)
+
+def draw_version():
+    version_str = VERSION
+    tft.fill_rect(180, 295, 60, 25, st7789.BLACK)  # Clear a rectangle in the corner
+    x = TFT_WIDTH - font_small.WIDTH * len(version_str) - 5
+    y = TFT_HEIGHT - font_small.HEIGHT - 5
+    tft.text(font_small, version_str, x, y, st7789.RED)'''
+
+def draw_version():
+    """ This actually works!!
+    yeah ik magic numbers are bad and stuff. stuck with this for now ig
+    """
+    version_str = VERSION
+    tft.fill_rect(255, 210, 60, 25, st7789.BLACK)
+    tft.text(font_small, version_str, 255, 210, st7789.RED)
 
 def load_times():
     try:
@@ -100,6 +124,7 @@ def display_scramble(scramble):
         x_line = max(0, (TFT_WIDTH - font_big.WIDTH * len(line)) // 2)
         tft.text(font_big, line, x_line, y, st7789.WHITE)
         y += 35
+    draw_version()
 
 def display_timer(time_val, running=True, clear_all=False):
     if clear_all:
@@ -149,6 +174,7 @@ def display_results_and_avgs(latest_time, times, clear_msg=False):
         prompt = "Tap GP15 to exit"
         x_prompt = max(0, (TFT_WIDTH - font_small.WIDTH * len(prompt)) // 2)
         tft.text(font_small, prompt, x_prompt, TFT_HEIGHT - font_small.HEIGHT - 4, st7789.MAGENTA)
+        draw_version()
         return
     s = "Latest: {:.2f}".format(latest_time)
     tft.text(font_small, s, 10, 40, st7789.GREEN)
@@ -172,6 +198,7 @@ def display_results_and_avgs(latest_time, times, clear_msg=False):
     prompt = "GP19: Clear | GP15: Exit"
     x_prompt = max(0, (TFT_WIDTH - font_small.WIDTH * len(prompt)) // 2)
     tft.text(font_small, prompt, x_prompt, TFT_HEIGHT - font_small.HEIGHT - 4, st7789.MAGENTA)
+    draw_version()
 
 def display_are_you_sure():
     tft.fill(st7789.BLACK)
@@ -181,6 +208,7 @@ def display_are_you_sure():
     msg2 = "GP19: Clear | GP15: Cancel"
     x_msg2 = max(0, (TFT_WIDTH - font_small.WIDTH * len(msg2)) // 2)
     tft.text(font_small, msg2, x_msg2, 90, st7789.MAGENTA)
+    draw_version()
 
 def wait_for_next_with_results():
     while True:
@@ -300,6 +328,7 @@ def timer_control():
     subtitle = "Done! Tap GP19"
     x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
     tft.text(font_big, subtitle, x_sub, 45, st7789.YELLOW)
+    draw_version()
     global BACKLIGHT_TIMEOUT_MS
     if final_elapsed >= 20:
         last_touch_time = time.ticks_ms()
