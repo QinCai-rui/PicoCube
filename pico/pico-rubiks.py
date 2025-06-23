@@ -1,5 +1,3 @@
-# NOTE: LCD sleep currently not working
-
 import machine
 import time
 import random
@@ -14,7 +12,7 @@ import vga1_8x16 as font_small
 # json processor for the log file
 import ujson
 
-VERSION = "v1.2.0-2"
+VERSION = "v1.3.0-1"
 
 TFT_WIDTH = 240
 TFT_HEIGHT = 320
@@ -218,72 +216,137 @@ def display_are_you_sure():
     tft.text(font_small, msg2, x_msg2, 90, st7789.MAGENTA)
     draw_version()
 
-def wait_for_next_with_results():
+def any_touch():
+    return timer_pin.value() or next_pin.value()
+
+BACKLIGHT_TIMEOUT_MS = 20000
+BACKLIGHT_SOLVE_EXTRA_MS = 10000
+SCRAMBLE_BACKLIGHT_TIMEOUT_MS = 30000  # 30 seconds on scramble screen
+last_touch_time = time.ticks_ms()
+backlight_on = True
+
+def set_backlight(state):
+    """
+    Set the backlight state properly
+    
+    Args:
+        state (bool): True to turn backlight on, False to turn it off
+    """
+    global backlight_on
+    tft.backlight.value(1 if state else 0)
+    backlight_on = state
+
+def update_touch_time():
+    """Update the last touch time (and force backlight on if needed)"""
+    global last_touch_time
+    last_touch_time = time.ticks_ms()
+    if not backlight_on:
+        set_backlight(True)
+
+def check_backlight_timeout(timeout_ms=None):
+    """
+    Check if backlight should be turned off due to timeout.
+    timeout_ms: custom timeout in ms (if None, uses BACKLIGHT_TIMEOUT_MS)
+    """
+    global backlight_on, last_touch_time
+    effective_timeout = timeout_ms if timeout_ms is not None else BACKLIGHT_TIMEOUT_MS
+    if backlight_on and time.ticks_diff(time.ticks_ms(), last_touch_time) > effective_timeout:
+        set_backlight(False)
+        return True
+    return False
+
+def wait_for_touch_or_action(pin_check_fn, backlight_timeout=None):
+    """
+    Wait for a pin to be pressed.
+    If the backlight is off, the first press wakes it and is ignored.
+    Only when backlight is on, a press triggers the action.
+    pin_check_fn: lambda returning True if action pin is pressed
+    backlight_timeout: custom timeout in ms
+    """
+    global backlight_on
     while True:
+        check_backlight_timeout(backlight_timeout)
+        if pin_check_fn():
+            update_touch_time()
+            if not backlight_on:
+                # Wake the screen, but do NOT trigger the action
+                while pin_check_fn():
+                    time.sleep_ms(10)
+                continue
+            # Backlight is on, so this is a real action
+            while pin_check_fn():
+                time.sleep_ms(10)
+            return
+        time.sleep_ms(10)
+
+def wait_for_next_scramble():
+    """
+    Wait (with touch-to-wake) for either pin to be pressed (30s timeout on scramble screen).
+    """
+    wait_for_touch_or_action(
+        lambda: next_pin.value() or timer_pin.value(),
+        backlight_timeout=SCRAMBLE_BACKLIGHT_TIMEOUT_MS
+    )
+
+def wait_for_next():
+    """
+    Wait (with touch-to-wake) for either pin to be pressed (default timeout).
+    """
+    wait_for_touch_or_action(
+        lambda: next_pin.value() or timer_pin.value()
+    )
+
+def wait_for_next_with_results():
+    """
+    Wait for next_pin or timer_pin. If screen is asleep, first press just wakes. Returns "clear" or "exit".
+    """
+    while True:
+        check_backlight_timeout()
         if next_pin.value():
+            update_touch_time()
+            if not backlight_on:
+                while next_pin.value():
+                    time.sleep_ms(10)
+                continue
             while next_pin.value():
                 time.sleep_ms(10)
             return "clear"
         if timer_pin.value():
+            update_touch_time()
+            if not backlight_on:
+                while timer_pin.value():
+                    time.sleep_ms(10)
+                continue
             while timer_pin.value():
                 time.sleep_ms(10)
             return "exit"
         time.sleep_ms(10)
 
 def wait_for_confirm_clear():
-    # Wait for GP19 (confirm clear) or GP15 (cancel)
+    """
+    Wait for confirmation (next_pin for clear, timer_pin for cancel), touch-to-wake.
+    Returns "clear" or "cancel".
+    """
     while True:
+        check_backlight_timeout()
         if next_pin.value():
+            update_touch_time()
+            if not backlight_on:
+                while next_pin.value():
+                    time.sleep_ms(10)
+                continue
             while next_pin.value():
                 time.sleep_ms(10)
             return "clear"
         if timer_pin.value():
+            update_touch_time()
+            if not backlight_on:
+                while timer_pin.value():
+                    time.sleep_ms(10)
+                continue
             while timer_pin.value():
                 time.sleep_ms(10)
             return "cancel"
-        time.sleep_ms(10)
-
-BACKLIGHT_TIMEOUT_MS = 20000
-BACKLIGHT_SOLVE_EXTRA_MS = 10000
-last_touch_time = time.ticks_ms()
-backlight_on = True
-
-def set_backlight(state):
-    global backlight_on
-    tft.backlight.value(1 if state else 0)
-    backlight_on = state
-
-def any_touch():
-    return timer_pin.value() or next_pin.value()
-
-def wait_for_release(pin):
-    while pin.value():
-        time.sleep_ms(10)
-
-def wait_for_press(pin):
-    while not pin.value():
-        time.sleep_ms(10)
-
-def wait_for_next():
-    global last_touch_time, backlight_on
-    while True:
-        if next_pin.value() or timer_pin.value():
-            time.sleep_ms(50)
-            if next_pin.value() or timer_pin.value():
-                if next_pin.value():
-                    while next_pin.value():
-                        time.sleep_ms(10)
-                else:
-                    while timer_pin.value():
-                        time.sleep_ms(10)
-                last_touch_time = time.ticks_ms()
-                if not backlight_on:
-                    set_backlight(True)
-                    time.sleep_ms(200)
-                    continue
-                return
-        if backlight_on and time.ticks_diff(time.ticks_ms(), last_touch_time) > BACKLIGHT_TIMEOUT_MS:
-            set_backlight(False)
         time.sleep_ms(10)
 
 def timer_control():
@@ -293,23 +356,18 @@ def timer_control():
     x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
     tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
     tft.text(font_big, subtitle, x_sub, 45, st7789.YELLOW)
-    while not timer_pin.value():
-        if not backlight_on and any_touch():
-            set_backlight(True)
-            last_touch_time = time.ticks_ms()
-        time.sleep_ms(10)
-    last_touch_time = time.ticks_ms()
+    # Wait for timer button press (GP15)
+    wait_for_touch_or_action(lambda: timer_pin.value())
+    update_touch_time()
     subtitle = "Release to start!"
     x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
     tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
     tft.text(font_big, subtitle, x_sub, 45, st7789.YELLOW)
     while timer_pin.value():
-        if not backlight_on and any_touch():
-            set_backlight(True)
-            last_touch_time = time.ticks_ms()
+        update_touch_time()
         time.sleep_ms(10)
     timer_start = time.ticks_ms()
-    last_touch_time = time.ticks_ms()
+    update_touch_time()
     running = True
     first_update = True
 
@@ -327,11 +385,12 @@ def timer_control():
         if timer_pin.value():
             break
         if any_touch():
-            last_touch_time = time.ticks_ms()
+            update_touch_time()
 
     final_elapsed = (time.ticks_ms() - timer_start) / 1000
     display_timer(final_elapsed, running=False, clear_all=True)
     while timer_pin.value():
+        update_touch_time()
         time.sleep_ms(10)
     subtitle = "Done! Tap GP19"
     x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
@@ -339,34 +398,35 @@ def timer_control():
     draw_version()
     global BACKLIGHT_TIMEOUT_MS
     if final_elapsed >= 20:
-        last_touch_time = time.ticks_ms()
+        update_touch_time()
         extra_wait = 0
         while extra_wait < BACKLIGHT_SOLVE_EXTRA_MS:
             time.sleep_ms(100)
             extra_wait += 100
             if any_touch():
-                last_touch_time = time.ticks_ms()
+                update_touch_time()
                 break
+            check_backlight_timeout()
     return final_elapsed
 
 # --- Main loop ---
-# Created with assistance from GitHub Copilot
+# Created with assistance from GitHub Copilot and heavily commented for clarity
 solve_times = load_times()
 def main():
     global solve_times
     while True:
         scramble = generate_scramble(20)
         display_scramble(scramble)
+        wait_for_next_scramble()  # 30s timeout on scramble screen, touch-to-wake logic
         timer_val = timer_control()
         solve_times.append({"time": timer_val, "scramble": scramble})
         save_times(solve_times)
-        # Wait for tap of GP19 to show results/averages
-        while not next_pin.value():
-            time.sleep_ms(10)
+        # Wait for tap of GP19 to show results/averages (touch-to-wake)
+        wait_for_touch_or_action(lambda: next_pin.value())
         while next_pin.value():
             time.sleep_ms(10)
         display_results_and_avgs(timer_val, solve_times)
-        # Wait for tap of GP19 (clear) or GP15 (exit)
+        # Wait for tap of GP19 (clear) or GP15 (exit), touch-to-wake
         action = wait_for_next_with_results()
         if action == "exit":
             continue
@@ -379,19 +439,16 @@ def main():
                 clear_times()
                 display_results_and_avgs(0, solve_times, clear_msg=True)
                 # Wait for tap of GP15 to exit cleared screen
-                while not timer_pin.value():
-                    time.sleep_ms(10)
+                wait_for_touch_or_action(lambda: timer_pin.value())
                 while timer_pin.value():
                     time.sleep_ms(10)
                 continue
             else:
                 # Cancel, redisplay stats
                 display_results_and_avgs(timer_val, solve_times)
-                # Wait again for user input
                 action = wait_for_next_with_results()
                 if action == "exit":
                     continue
-                # If user hits clear again, repeat confirmation
                 elif action == "clear":
                     display_are_you_sure()
                     confirm_action = wait_for_confirm_clear()
@@ -399,8 +456,7 @@ def main():
                         solve_times = []
                         clear_times()
                         display_results_and_avgs(0, solve_times, clear_msg=True)
-                        while not timer_pin.value():
-                            time.sleep_ms(10)
+                        wait_for_touch_or_action(lambda: timer_pin.value())
                         while timer_pin.value():
                             time.sleep_ms(10)
                         continue
@@ -417,8 +473,7 @@ def main():
                                     solve_times = []
                                     clear_times()
                                     display_results_and_avgs(0, solve_times, clear_msg=True)
-                                    while not timer_pin.value():
-                                        time.sleep_ms(10)
+                                    wait_for_touch_or_action(lambda: timer_pin.value())
                                     while timer_pin.value():
                                         time.sleep_ms(10)
                                     break
