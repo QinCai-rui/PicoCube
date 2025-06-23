@@ -316,6 +316,7 @@ def timer_control():
 # Created with assistance from GitHub Copilot
 solve_times = load_times()
 def main():
+    global solve_times
     while True:
         scramble = generate_scramble(20)
         display_scramble(scramble)
