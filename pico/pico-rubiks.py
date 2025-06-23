@@ -350,22 +350,62 @@ def wait_for_confirm_clear():
         time.sleep_ms(10)
 
 def timer_control():
-    # need to add more comments here later
+    """Fixed??? by GitHub Copilot""" 
     global last_touch_time
     subtitle = "Hold GP15 to prep"
     x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
     tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
     tft.text(font_big, subtitle, x_sub, 45, st7789.YELLOW)
-    # Wait for timer button press (GP15)
-    wait_for_touch_or_action(lambda: timer_pin.value())
+
+    HOLD_TIME_MS = 200  # Minimum hold time to qualify as "ready"
+
+    print("[DEBUG] Waiting for button release before accepting hold...")
+    # 1. Wait for button release
+    while timer_pin.value():
+        update_touch_time()
+        time.sleep_ms(10)
+    print("[DEBUG] Button released. Ready for fresh hold.")
+
+    while True:
+        print("[DEBUG] Waiting for you to press and hold GP15...")
+        # 2. Wait for button press
+        while not timer_pin.value():
+            check_backlight_timeout()
+            time.sleep_ms(10)
+        print("[DEBUG] Button pressed. Timing hold...")
+
+        # 3. Start measuring hold time
+        hold_start = time.ticks_ms()
+        held_long_enough = False
+        while timer_pin.value():
+            held_time = time.ticks_diff(time.ticks_ms(), hold_start)
+            print(f"[DEBUG] Holding button: {held_time} ms", end="\r")
+            if held_time >= HOLD_TIME_MS:
+                held_long_enough = True
+                print(f"\n[DEBUG] Button held long enough: {held_time} ms")
+                break
+            update_touch_time()
+            time.sleep_ms(10)
+
+        # If held long enough, break and go to release-to-start step
+        if held_long_enough:
+            print("[DEBUG] Proceeding to 'Release to start!'")
+            break
+        else:
+            print("[DEBUG] Button released too soon. Restarting hold wait...")
+
     update_touch_time()
     subtitle = "Release to start!"
     x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
     tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
     tft.text(font_big, subtitle, x_sub, 45, st7789.YELLOW)
+    print("[DEBUG] Waiting for button release to start timer...")
+
+    # 4. Wait for button release ("release to start!")
     while timer_pin.value():
         update_touch_time()
         time.sleep_ms(10)
+    print("[DEBUG] Button released. Timer started!")
     timer_start = time.ticks_ms()
     update_touch_time()
     running = True
@@ -383,12 +423,14 @@ def timer_control():
             last_update = now
         time.sleep_ms(poll_interval)
         if timer_pin.value():
+            print(f"[DEBUG] Timer stopped at {elapsed:.2f} seconds")
             break
         if any_touch():
             update_touch_time()
 
     final_elapsed = (time.ticks_ms() - timer_start) / 1000
     display_timer(final_elapsed, running=False, clear_all=True)
+    print(f"[DEBUG] Final elapsed time: {final_elapsed:.2f} seconds")
     while timer_pin.value():
         update_touch_time()
         time.sleep_ms(10)
