@@ -177,4 +177,4 @@ To my surprise (this time negatively), the touch sensor I was initially using is
 
 upon repeatition of the test on other sensors, another one (with clearly visible damage) turned out to be faulty... OOF. Two in a row, that leaves 3 working sensors left, and 2 in use, leaving **only** 1 backup sensor. URGHHH.. I WANT SOME BACKUP SENSORS SO I DONT HAVE TO FEAR THAT A TOUCH WILL BREAK ONE!!! But it is what it is, and I decided it was enough work for one day.
 
-WIP: this entry is not complete
+WIP: this entry is not complete. need to have dinner now.....
