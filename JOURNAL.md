@@ -173,6 +173,8 @@ I then started to convert the previously made-for-the-better-and-faster-pi02w Py
 
 Things are not as easy as i thought, however. The screen's rotation was wrong; I wanted it to be horizontal, but instead it was verticle. Also, some text are clipped off the screen. To make matter even worse, the touch sensor did not do _anything_. I left some of hard work to GitHub Copilot to fix the rotation and text clipping, and I tried to change to a different touch sensor, since it came in a pack of 5.
 
-To my surprise (this time negatively), the touch sensor I was initially using is faulty; a quick test with another sensor quickly comfirmed that.
+To my surprise (this time negatively), the touch sensor I was initially using is faulty; a quick test with another sensor quickly comfirmed that. Ahhh, AliExpress, maybe you are not that reliable. 
 
-WIP
+upon repeatition of the test on other sensors, another one (with clearly visible damage) turned out to be faulty... OOF. Two in a row, that leaves 3 working sensors left, and 2 in use, leaving **only** 1 backup sensor. URGHHH.. I WANT SOME BACKUP SENSORS SO I DONT HAVE TO FEAR THAT A TOUCH WILL BREAK ONE!!! But it is what it is, and I decided it was enough work for one day.
+
+WIP: this entry is not complete
