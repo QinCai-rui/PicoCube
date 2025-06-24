@@ -161,7 +161,7 @@ _see (BOM)[https://github.com/QinCai-rui/RasPiCube/blob/432650de670bce71bf1978ce
 Time spent: **1 hour** (browsing, comparing, reading reviews, dodging dodgy sellers on Ali)
 
 
-## 22/6/25 - 24/6/25
+## 19/6/25 - 23/6/25
 
 ### Update 1/13
 
@@ -188,4 +188,8 @@ The next day, although I forgot the date, I started fixing the remaining of the 
 
 This makes me think: isn't that myself, and most other human programmers are currently doing? If LLMs _really_ do became more powerful, again, would there be **_any_** point at all having programmers around in that stage? What would be the point of learning programming, for future programmers, if LLMs can do it better than us? I guess we will have to wait and see.
 
-WIP: this entry is not complete.
+Anyways, GitHub Copilot did help me a lot, and I managed to get the program working. I then tested it on the Pico, and it worked! The touch sensor was working, the screen was displaying the text correctly, and the timer was working as expected. I was very happy with the result, and I decided to call it a day.
+
+But nope. I had more ideas to implement, but I thought I should leave them for another day. I had a lot of fun working on and playing with this project.
+
+## 24/6/25
