@@ -161,4 +161,18 @@ _see (BOM)[https://github.com/QinCai-rui/RasPiCube/blob/432650de670bce71bf1978ce
 Time spent: **1 hour** (browsing, comparing, reading reviews, dodging dodgy sellers on Ali)
 
 
+## 22/6/25 - 24/6/25
 
+### Update 1/13
+
+YAY I got my packages for my project, and I immediately started putting it together. To my surprise, AliExpress' stuff are not _that_ bad. Since my Raspberry Pi Zero 2 W from [#raspap](https://hackclub.slack.com/archives/C07UZSKJQRX), which I planned to use initially, still hasn't even shipped (!!!!!!) (SMH, insert sad face, insert :heavy-sob: emoji)
+
+Since I do not wait **another** 6 months for my Pi to ship from the USA to New Zealand, I put my idle Raspberry Pi Pico (WH) into work. Surprisingly (again), there is a library for the LCD screen I am using. So I installed MicroPython on the Pico, copied the library across in the `lib/` directory, and discovered -- that I need fonts "libraries" to display text. Thankfully (why are there so many adverbs..), the GitHub repo of that library includes some so-called "ROM Fonts", so again, I downloaded the 32x16 and 16x8 fonts onto the Pico, in the `lib/` directory.
+
+I then started to convert the previously made-for-the-better-and-faster-pi02w Python program into the MicroPython version the Pico requires. I had to keep in mind the different pin allocations and stuff, which was pretty annoying, but manageable. It took like 2 and a bit hours, but there it is - a fully functional (Micro)Python code that can run the the Pico, or so I hoped. I named the file `main.py` so that it automatically starts on boot.
+
+Things are not as easy as i thought, however. The screen's rotation was wrong; I wanted it to be horizontal, but instead it was verticle. Also, some text are clipped off the screen. To make matter even worse, the touch sensor did not do _anything_. I left some of hard work to GitHub Copilot to fix the rotation and text clipping, and I tried to change to a different touch sensor, since it came in a pack of 5.
+
+To my surprise (this time negatively), the touch sensor I was initially using is faulty; a quick test with another sensor quickly comfirmed that.
+
+WIP
