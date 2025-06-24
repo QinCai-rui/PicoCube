@@ -155,14 +155,14 @@ def avg_of(times, count):
     Calculate average of count solves, trimming best and worst results for count >= 5
     For a standard Rubik's cube timer, both ao5 and ao12 require trimming.
     
-    This function is created with assistance from GitHub Copilot
+    This function is created with assistance from GitHub Copilot, since my old method was not working
     """
     if len(times) < count:
         return None
-        
+
     # Get the most recent 'count' times
     recent_times = [entry["time"] for entry in times[-count:]]
-    
+
     # For ao5 and ao12, trim the best and worst times according to WCA standards
     sorted_times = sorted(recent_times)
     trimmed = sorted_times[1:-1]  # Remove best and worst
@@ -170,7 +170,7 @@ def avg_of(times, count):
 
 def display_results_and_avgs(latest_time, times, clear_msg=False):
     """
-    Part of this function is created with assistance from GitHub Copilot
+    Part of this function is created with assistance from GitHub Copilot, since my old method was not working
     """
     tft.fill(st7789.BLACK)
     title = "Solve Results"
@@ -194,11 +194,11 @@ def display_results_and_avgs(latest_time, times, clear_msg=False):
         tft.text(font_small, "{:2d}: {:.2f}".format(len(times)-i, t), 70, y, st7789.WHITE)
         y += font_small.HEIGHT + 2
     y += 10
-    
+
     # Fixed average calculations
     ao5 = avg_of(times, 5)
     ao12 = avg_of(times, 12)
-    
+
     ao5_str = "ao5:  --.--" if ao5 is None else "ao5: {:.2f}".format(ao5)
     ao12_str = "ao12: --.--" if ao12 is None else "ao12: {:.2f}".format(ao12)
     tft.text(font_small, ao5_str, 10, y, st7789.CYAN)
