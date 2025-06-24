@@ -12,7 +12,7 @@ import vga1_8x16 as font_small
 # json processor for the log file
 import ujson
 
-VERSION = "v1.4.1-3"
+VERSION = "v1.4.1-4"
 
 TFT_WIDTH = 240
 TFT_HEIGHT = 320
@@ -404,7 +404,7 @@ def timer_control():
         else:
             #print("[DEBUG] Button released too soon. Restarting hold wait...")
             update_touch_time()
-            
+
     # Leave "Release to start!" in red until released
     #print("[DEBUG] Waiting for button release to start timer...")
     while timer_pin.value():
