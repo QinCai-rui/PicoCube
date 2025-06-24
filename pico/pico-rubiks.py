@@ -22,7 +22,7 @@ TFT_HEIGHT = 320
 REAL_WIDTH = 320
 REAL_HEIGHT = 240
 
-spi = machine.SPI(1, baudrate=40000000, polarity=1, phase=0) # haven't yet experimented with higher data rates
+spi = machine.SPI(1, baudrate=40000000, polarity=1, phase=0)    # Higher baudrate doesn't do anything somehow
 tft = st7789.ST7789(
     spi,
     TFT_WIDTH,
