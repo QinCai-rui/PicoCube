@@ -385,6 +385,12 @@ def timer_control():
         while timer_pin.value():
             held_time = time.ticks_diff(time.ticks_ms(), hold_start)
             #print(f"[DEBUG] Holding button: {held_time} ms", end="\r")
+            if not held_long_enough:
+                # Draw "Release to start!" in yellow if not pressed long enough
+                subtitle = "Release to start!"
+                x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
+                tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
+                tft.text(font_big, subtitle, x_sub, 45, release_color)
             if not held_long_enough and held_time >= HOLD_TIME_MS:
                 held_long_enough = True
                 #print(f"\n[DEBUG] Button held long enough: {held_time} ms")
@@ -393,7 +399,7 @@ def timer_control():
                 tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
                 tft.text(font_big, subtitle, x_sub, 45, release_color)
             update_touch_time()
-            time.sleep_ms(10)
+            time.sleep_ms(50)
 
         if held_long_enough:
             #print("[DEBUG] Proceeding to 'Release to start!'")
