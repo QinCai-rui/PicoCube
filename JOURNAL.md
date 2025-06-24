@@ -192,4 +192,7 @@ Anyways, GitHub Copilot did help me a lot, and I managed to get the program work
 
 But nope. I had more ideas to implement, but I thought I should leave them for another day. I had a lot of fun working on and playing with this project.
 
+Time spent this session: **7 hours** (including the time unboxing the stuff, testing the touch sensors, and fixing the program)
+
 ## 24/6/25
+### Update 1/14
