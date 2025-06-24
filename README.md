@@ -4,7 +4,7 @@
 
 ![Rubik's Cube Timer](https://github.com/user-attachments/assets/c9dac93d-f04c-47e7-b45a-9a12dfbac601)
 
-_NOTE: The image shows demo powered by a Raspberry Pi Pico_
+_NOTE: The image shows (simulated on Wokwi) demo powered by a Raspberry Pi Pico_
 
 ## Why I Made This Project
 
