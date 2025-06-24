@@ -12,7 +12,7 @@ import vga1_8x16 as font_small
 # json processor for the log file
 import ujson
 
-VERSION = "v1.4.2-1"
+VERSION = "v1.5.1-1"
 
 # ST7789 driver dimensions (portrait mode)
 TFT_WIDTH = 240  
