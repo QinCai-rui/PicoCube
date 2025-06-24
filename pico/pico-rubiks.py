@@ -358,19 +358,19 @@ def timer_control():
 
     HOLD_TIME_MS = 400  # Minimum hold time to qualify as "ready"
 
-    print("[DEBUG] Waiting for button release before accepting hold...")
+    #print("[DEBUG] Waiting for button release before accepting hold...")
     while timer_pin.value():
         update_touch_time()
         time.sleep_ms(10)
-    print("[DEBUG] Button released. Ready for fresh hold.")
+    #print("[DEBUG] Button released. Ready for fresh hold.")
 
     while True:
-        print("[DEBUG] Waiting for you to press and hold GP15...")
+        #print("[DEBUG] Waiting for you to press and hold GP15...")
         # Wait for button press
         while not timer_pin.value():
             check_backlight_timeout()
             time.sleep_ms(10)
-        print("[DEBUG] Button pressed. Timing hold...")
+        #print("[DEBUG] Button pressed. Timing hold...")
 
         hold_start = time.ticks_ms()
         held_long_enough = False
