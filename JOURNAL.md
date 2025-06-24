@@ -186,6 +186,6 @@ The next day, although I forgot the date, I started fixing the remaining of the 
     Suggest architectural improvements.
     Run and refine its own work through an agentic loop, including planning, applying changes, testing, and iterating.
 
-This makes me think: isn't that myself, and most other human programmers are currently doing? If LLMs _really_ do became more powerful, again, would there be **_any_** point at all having programmers around in that stage? 
+This makes me think: isn't that myself, and most other human programmers are currently doing? If LLMs _really_ do became more powerful, again, would there be **_any_** point at all having programmers around in that stage? What would be the point of learning programming, for future programmers, if LLMs can do it better than us? I guess we will have to wait and see.
 
 WIP: this entry is not complete.
