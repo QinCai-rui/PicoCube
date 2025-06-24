@@ -177,4 +177,15 @@ To my surprise (this time negatively), the touch sensor I was initially using is
 
 upon repeatition of the test on other sensors, another one (with clearly visible damage) turned out to be faulty... OOF. Two in a row, that leaves 3 working sensors left, and 2 in use, leaving **only** 1 backup sensor. URGHHH.. I WANT SOME BACKUP SENSORS SO I DONT HAVE TO FEAR THAT A TOUCH WILL BREAK ONE!!! But it is what it is, and I decided it was enough work for one day.
 
-WIP: this entry is not complete. need to have dinner now.....
+The next day, although I forgot the date, I started fixing the remaining of the not-working parts of the program. Copilot did most of the work, fixing my logic errors and stuff. This makes me think, if in the future, LLMs like Claude, get even "smarter" and more "reliable", would there be any demand for programmers at all? Even program testers would not be needed anymore if the LLMs could self-test their program. And just a month ago (iirc), [GitHub introduced Agent Mode for their GitHub Copilot](https://github.blog/ai-and-ml/github-copilot/agent-mode-101-all-about-github-copilots-powerful-mode/). According to their blog, the Agent Mode Copilot is capable of:
+
+    Analyze your codebase to grasp the full context.
+    Plan and execute multi-step solutions.
+    Run commands or tests.
+    Reach out to external tools for specialized tasks.
+    Suggest architectural improvements.
+    Run and refine its own work through an agentic loop, including planning, applying changes, testing, and iterating.
+
+This makes me think: isn't that myself, and most other human programmers are currently doing? If LLMs _really_ became more powerful, again, would there be **_any_** point at all having programmers around in that stage? 
+
+WIP: this entry is not complete.
