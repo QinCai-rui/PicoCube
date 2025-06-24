@@ -403,8 +403,8 @@ def timer_control():
             break
         else:
             #print("[DEBUG] Button released too soon. Restarting hold wait...")
-
-    update_touch_time()
+            update_touch_time()
+            
     # Leave "Release to start!" in red until released
     #print("[DEBUG] Waiting for button release to start timer...")
     while timer_pin.value():
