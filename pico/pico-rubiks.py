@@ -46,7 +46,7 @@ def draw_version():
 
 def draw_version():
     """Draw version in bottom-right corner with proper calculations
-    Based on the coordinates (255, 210) that worked previously
+    Based on the coordinates (255, 210) that worked previously (the function above)
     
     This is created with help from GitHub Copilot, using the previous function above"""
     version_str = VERSION
