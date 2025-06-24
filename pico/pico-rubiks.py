@@ -12,7 +12,7 @@ import vga1_8x16 as font_small
 # json processor for the log file
 import ujson
 
-VERSION = "v1.4.1-1"
+VERSION = "v1.4.1-3"
 
 TFT_WIDTH = 240
 TFT_HEIGHT = 320
