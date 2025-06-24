@@ -145,7 +145,7 @@ def display_timer(time_val, running=True, clear_all=False):
     
     timer_width = font_big.WIDTH * len(timer_str)
     
-    # Only clear the rectangle where the time will be displayed. This should hopefully increase the frame rate and reduce flickering
+    # Only clear the rectangle where the time will be displayed. This should increases the frame rate and reduce flickering
     tft.fill_rect(x_timer, y_timer, timer_width, font_big.HEIGHT, st7789.BLACK)
     
     tft.text(font_big, timer_str, x_timer, y_timer, st7789.GREEN if running else st7789.CYAN)
