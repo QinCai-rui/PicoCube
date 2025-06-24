@@ -12,10 +12,16 @@ import vga1_8x16 as font_small
 # json processor for the log file
 import ujson
 
-VERSION = "v1.4.1-4"
+VERSION = "v1.4.2-1"
 
-TFT_WIDTH = 240
+# ST7789 driver dimensions (portrait mode)
+TFT_WIDTH = 240  
 TFT_HEIGHT = 320
+
+# Physical dimensions in current orientation (landscape mode with rotation=1)
+REAL_WIDTH = 320
+REAL_HEIGHT = 240
+
 spi = machine.SPI(1, baudrate=40000000, polarity=1, phase=0) # haven't yet experimented with higher data rates
 tft = st7789.ST7789(
     spi,
@@ -358,7 +364,8 @@ def timer_control():
         # Draw "Hold GP15 to prep" every retry
         subtitle = "Hold GP15 to prep"
         x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
-        tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
+        # Use REAL_WIDTH to ensure the full width of the screen is cleared in landscape mode
+        tft.fill_rect(0, 45, REAL_WIDTH, font_big.HEIGHT, st7789.BLACK)
         tft.text(font_big, subtitle, x_sub, 45, st7789.YELLOW)
 
         # Wait for button press
@@ -377,14 +384,16 @@ def timer_control():
                 if prev_state != "keep":
                     subtitle = "Keep holding it"
                     x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
-                    tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
+                    # Use REAL_WIDTH to ensure the full width of the screen is cleared in landscape mode
+                    tft.fill_rect(0, 45, REAL_WIDTH, font_big.HEIGHT, st7789.BLACK)
                     tft.text(font_big, subtitle, x_sub, 45, st7789.YELLOW)
                     prev_state = "keep"
             elif not held_long_enough and held_time >= HOLD_TIME_MS:
                 held_long_enough = True
                 subtitle = "Release to start!"
                 x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
-                tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
+                # Use REAL_WIDTH to ensure the full width of the screen is cleared in landscape mode
+                tft.fill_rect(0, 45, REAL_WIDTH, font_big.HEIGHT, st7789.BLACK)
                 tft.text(font_big, subtitle, x_sub, 45, st7789.RED)
                 prev_state = "release"
             update_touch_time()
@@ -429,6 +438,8 @@ def timer_control():
         time.sleep_ms(10)
     subtitle = "Done! Tap GP19"
     x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
+    # Use REAL_WIDTH to ensure the full width of the screen is cleared in landscape mode
+    tft.fill_rect(0, 45, REAL_WIDTH, font_big.HEIGHT, st7789.BLACK)
     tft.text(font_big, subtitle, x_sub, 45, st7789.YELLOW)
     draw_version()
     global BACKLIGHT_TIMEOUT_MS
