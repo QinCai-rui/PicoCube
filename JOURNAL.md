@@ -33,11 +33,12 @@ Traceback (most recent call last):
                  ^^^^
 UnboundLocalError: cannot access local variable 'time' where it is not associated with a value
 ```
+
 so i changed `time` to `solve_time` :))
 
 Another challenge was to display the real-time timer, which every rubiks cube timer should have. In the older real-time version of this program, the user had to press `CTRL+C` to trigger the timer stop, which is not ideal. Fortunately I worked _that_ out as well, using `threading`
 
----------------------------
+---------------------
 
 ## 19/5/25
 
@@ -47,7 +48,7 @@ After about **1.5 hours** of hard grind, behold -- the `PiCubeZero`. Okay, im no
 
 The process was pretty straightforward, since there is sooo much documentation on the Internet about the modules I was/am after. I fed the completed program into `GPT-4.1` to check for any mistakes and suggestions, and good -- no big mistakes, but a few changes were made, such as the font selection thing I do _not_ know how it works, or if it's supposed to work... 
 
-----------
+---------------------
 
 ### Update 2/4
 
@@ -57,14 +58,14 @@ Screenshot: ![image](https://github.com/user-attachments/assets/c9dac93d-f04c-47
 
 _(pls ignore the inconsistency between the OLED screen and the 7-seg display. The simulator is **extremely** laggy, with one second simulated being 15+ secs in real life)_
 
----------
+---------------------
 
 ### Update 3/5
 
 Spent like **1.5 hours** creating the BOM, and it is not even complete (yet). 
 Here is the [BOM for RasPiCube - PiCubeZero](https://github.com/QinCai-rui/RasPiCube/blob/main/BOM/BOM.md)
 
-----------
+---------------------
 
 ## 20/5/25
 
@@ -74,11 +75,11 @@ Just updated the RasPiCube - PiCubeZero program to use a Waveshare 2-inch IPS LC
 
 Time spent this session: ~**1.5 hours**
 
--------------
+---------------------
 
 ### Update 2/7
 
-For this session, I worked a lot on the [PiCubeZero's BOM](https://github.com/QinCai-rui/RasPiCube/blob/main/BOM/BOM.md). I tried comparing the items I need on Aliexpress and Amazon. I almost got scammed by (likely) a scam on Aliexpress. [Link](https://www.aliexpress.com/item/1005008269997334.html)
+For this session, I worked a lot on the [PiCubeZero's BOM](https://github.com/QinCai-rui/RasPiCube/blob/main/BOM/BOM.md). I tried comparing the items I need on Aliexpress and Amazon. I almost got scammed by (likely) a scam on Aliexpress. [Link here](https://www.aliexpress.com/item/1005008269997334.html)
 
 The "Sandian" branded uSD cards look sooo similar to the real "SanDisk" ones.
 
@@ -95,15 +96,15 @@ Maybe just don't buy uSD cards from AliExpress... Buy them on Amazon instead ig.
 
 Time spent this session: ~**1 hour**
 
---------------
+---------------------
 
-### Update 3/8 
+### Update 3/8
 
 Since I couldn't find one single NeoPixel (as in 1 LED), I decided to switch to a common-cathode RGB LED. Simple! Also saved a bit of cash....
 
 Time spent this session: **25 minutes**
 
-------------
+---------------------
 
 ## 21/5/25
 
@@ -116,7 +117,7 @@ Updated the BOM to include all needed parts. This project is gonna cost a lot wi
 
 Time spent this session: **30 minutes**
 
------------------
+---------------------
 
 ## 2/6/25
 
@@ -127,7 +128,7 @@ Update the BOM once again to only include the parts that i need. This brings the
 ![image](https://github.com/user-attachments/assets/0e33619f-2dc4-43c3-b796-6be7972aefd4)
 Time spent this session: **20 minutes**
 
---------------------
+---------------------
 
 ### Update 2/11
 
@@ -135,7 +136,7 @@ Cleanned up the repo!! There is nothing more i could say..
 
 Time spent this session: **25 minutes**
 
--------------------
+---------------------
 
 ## 7/6/25
 
@@ -147,6 +148,7 @@ Spent **1.5 hours** looking for a better USB WiFi adapter. Ended up finding this
 Turns out, this adapter is actually listed in [morrownr's Linux USB WiFi compatibility list](https://github.com/morrownr/USB-WiFi/blob/main/home/USB_WiFi_Adapters_that_are_supported_with_Linux_in-kernel_drivers.md), so it should work just fine out of the box. It’s the Fenvi FU-AX1800 (uses the mt7921au chipset), which is pretty much plug-and-play on any recent Linux, as long as you’re not running some ancient kernel from the Stone Age (ahem, looking at Raspberry Pi OS, which just migrated to 6.12).
 
 Some random thoughts:
+
 - mt7921au = good chipset, Linux likes it, no weird drivers, just works (or so i hope).
 - Loads of positive reviews from other Linux nerds online, especially on AliExpress and in that repo.
 - It’s super cheap ($1.72 with Welcome Deal). Not gonna break HC's bank.
@@ -160,6 +162,7 @@ _see (BOM)[https://github.com/QinCai-rui/RasPiCube/blob/432650de670bce71bf1978ce
 
 Time spent: **1 hour** (browsing, comparing, reading reviews, dodging dodgy sellers on Ali)
 
+---------------------
 
 ## 19/6/25 - 23/6/25
 
@@ -194,5 +197,8 @@ But nope. I had more ideas to implement, but I thought I should leave them for a
 
 Time spent this session: **7 hours** (including the time unboxing the stuff, testing the touch sensors, and fixing the program)
 
+---------------------
+
 ## 24/6/25
+
 ### Update 1/14
