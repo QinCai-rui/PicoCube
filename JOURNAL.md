@@ -202,3 +202,7 @@ Time spent this session: **7 hours** (including the time unboxing the stuff, tes
 ## 24/6/25
 
 ### Update 1/14
+
+For this session, I fixed most of the bugs introduced by the previous session. For example, there is the issue that the timer does not start when the user releases the touch sensor, but only when the user presses it. This is not ideal, since the user might accidentally release the touch sensor before they are ready to start the timer. I fixed this by adding a delay of 0.4 seconds before starting the timer, so that the user has time to get ready.
+
+Time spent this session: **2 hours**
