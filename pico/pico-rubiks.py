@@ -39,9 +39,6 @@ RESULTS_FILE = "cube_times.json"
 
 '''
 def draw_version():
-    """ This actually works!!
-    yeah ik magic numbers are bad and stuff. stuck with this for now ig
-    """
     version_str = VERSION
     tft.fill_rect(255, 210, 60, 25, st7789.BLACK)
     tft.text(font_small, version_str, 255, 210, st7789.RED)
