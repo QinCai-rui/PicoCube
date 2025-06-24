@@ -355,7 +355,7 @@ def timer_control():
         time.sleep_ms(10)
 
     while True:
-        # --- Draw "Hold GP15 to prep" every retry ---
+        # Draw "Hold GP15 to prep" every retry
         subtitle = "Hold GP15 to prep"
         x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
         tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
@@ -368,30 +368,34 @@ def timer_control():
 
         hold_start = time.ticks_ms()
         held_long_enough = False
-        release_color = st7789.YELLOW
-
-        # Draw "Release to start!" in yellow initially
-        subtitle = "Release to start!"
-        x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
-        tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
-        tft.text(font_big, subtitle, x_sub, 45, release_color)
+        prev_state = ""  # Track current instruction
 
         while timer_pin.value():
             held_time = time.ticks_diff(time.ticks_ms(), hold_start)
-            if not held_long_enough and held_time >= HOLD_TIME_MS:
+            # Show "Keep holding it" if under 400ms, otherwise "Release to start!"
+            if not held_long_enough and held_time < HOLD_TIME_MS:
+                if prev_state != "keep":
+                    subtitle = "Keep holding it"
+                    x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
+                    tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
+                    tft.text(font_big, subtitle, x_sub, 45, st7789.YELLOW)
+                    prev_state = "keep"
+            elif not held_long_enough and held_time >= HOLD_TIME_MS:
                 held_long_enough = True
-                release_color = st7789.RED
+                subtitle = "Release to start!"
+                x_sub = max(0, (TFT_WIDTH - font_big.WIDTH * len(subtitle)) // 2)
                 tft.fill_rect(0, 45, TFT_WIDTH, font_big.HEIGHT, st7789.BLACK)
-                tft.text(font_big, subtitle, x_sub, 45, release_color)
+                tft.text(font_big, subtitle, x_sub, 45, st7789.RED)
+                prev_state = "release"
             update_touch_time()
-            time.sleep_ms(50)
+            time.sleep_ms(30)
 
         if held_long_enough:
             break
         else:
             # Button released too soon, loop and redraw "Hold GP15 to prep"
             update_touch_time()
-            # The next iteration of the loop will redraw the "hold" screen
+            # Loop repeats, "Hold GP15 to prep" will be redrawn
 
     # Wait for button release to start timer
     while timer_pin.value():
