@@ -36,7 +36,7 @@ except ImportError:
     print("Warning: st7789 library not found. Install with: pip3 install st7789")
     HAS_ST7789 = False
 
-VERSION = "v1.5.1-1-Pi"
+VERSION = "v1.5.1-rpi"
 
 # GPIO Pin definitions (BCM numbering)
 TIMER_PIN = 15  # GPIO 15 (Physical pin 10) - Timer control (GP15 equivalent)
