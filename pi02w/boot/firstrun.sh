@@ -112,6 +112,16 @@ else
    echo "rc-local.service not found, skipping rc.local enablement."
 fi
 
+# Add shebang to /etc/rc.local file if it doesn't exist
+if [ ! -f /etc/rc.local ]; then
+   echo -e "#!/bin/sh\nexit 0" > /etc/rc.local
+   chmod +x /etc/rc.local
+else
+   if ! grep -q "^#!/bin/sh" /etc/rc.local; then
+      sed -i '1i#!/bin/sh' /etc/rc.local
+   fi
+fi
+
 #rm -f /boot/firstrun.sh
 sed -i 's| systemd.run.*||g' /boot/cmdline.txt
 
