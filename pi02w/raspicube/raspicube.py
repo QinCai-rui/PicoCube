@@ -134,7 +134,7 @@ class PiCubeTimer:
                     spi_speed_hz=40000000,
                     width=TFT_WIDTH,
                     height=TFT_HEIGHT,
-                    rotation=90    # Landscape mode (rotation=1 equivalent)
+                    rotation=0
                 )
                 print("✅ ST7789 display initialized")
                 
