@@ -1,0 +1,35 @@
+#!/bin/bash
+
+LOGFILE="/var/log/rc-local.log"
+
+sudo touch "$LOGFILE"
+sudo chmod 666 "$LOGFILE"
+
+{
+echo "---- $(date): ifconfig ----"
+ifconfig
+
+echo "---- $(date): lsusb ----"
+lsusb
+
+echo "---- $(date): nmcli device ----"
+nmcli device
+
+echo "---- $(date): Installing cloudflared ----"
+sudo mkdir -p --mode=0755 /usr/share/keyrings
+curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+
+echo "---- $(date): Adding cloudflared repo ----"
+echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main' | sudo tee /etc/apt/sources.list.d/cloudflared.list
+
+echo "---- $(date): apt-get update && install cloudflared ----"
+sudo apt-get update && sudo apt-get install -y cloudflared
+
+KEY="REDACTED"
+
+echo "---- $(date): Installing cloudflared service with key ----"
+sudo cloudflared service install "$KEY"
+} >> "$LOGFILE" 2>&1
+
+exit 0
+

@@ -50,3 +50,4 @@ dtoverlay=dwc2,dr_mode=host
 
 [all]
 dtoverlay=dwc2
+dtoverlay=disable-wifi
