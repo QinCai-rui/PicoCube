@@ -1,0 +1,4 @@
+RPi.GPIO
+st7789
+Pillow
+numpy
