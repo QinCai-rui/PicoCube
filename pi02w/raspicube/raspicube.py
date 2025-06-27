@@ -31,11 +31,11 @@ from luma.core.render import canvas
 from luma.lcd.device import st7789
 from PIL import Image, ImageDraw, ImageFont
 
-VERSION = "v1.6.0-rpi"
+VERSION = "v1.6.1-rpi"
 
 # GPIO Pin definitions (BCM numbering)
-TIMER_PIN = 15  # GPIO 15 (Physical pin 10) - Timer control (GP15 equivalent)
-NEXT_PIN = 19   # GPIO 19 (Physical pin 35) - Next scramble / show avgs (GP19 equivalent)
+TIMER_PIN = 26
+NEXT_PIN = 19
 
 # Display dimensions - using actual ST7789 resolution
 DISPLAY_WIDTH = 320
