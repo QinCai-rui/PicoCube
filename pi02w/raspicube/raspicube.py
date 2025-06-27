@@ -379,7 +379,7 @@ class PiCubeTimer:
             x_prompt = max(0, (DISPLAY_WIDTH - prompt_width) // 2)
             self.draw_text(draw, prompt, x_prompt, DISPLAY_HEIGHT - 30, self.font_manager.small_font, Colors.MAGENTA)
             '''
-            
+
             # Version
             version_bbox = draw.textbbox((0, 0), VERSION, font=self.font_manager.small_font)
             version_width = version_bbox[2] - version_bbox[0]
@@ -426,7 +426,7 @@ class PiCubeTimer:
         """Display timer preparation screen"""
         def draw_prep(draw):
             # Title
-            title = "RasPiCube - PicoCube"
+            title = "RasPiCubeZero"
             title_bbox = draw.textbbox((0, 0), title, font=self.font_manager.big_font)
             title_width = title_bbox[2] - title_bbox[0]
             x_title = max(0, (DISPLAY_WIDTH - title_width) // 2)
