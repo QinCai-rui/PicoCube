@@ -7,8 +7,8 @@ WorkingDirectory=/home/qincai/raspicube/pi02w/raspicube
 ExecStart=/usr/bin/python3 /home/qincai/raspicube/pi02w/raspicube/raspicube.py
 Restart=always
 RestartSec=10
-StandardOutput=journal
-StandardError=journal
+StandardOutput=append
+StandardError=append
 
 Environment=PYTHONPATH=/home/qincai/.local/lib/python3.11/site-packages
 Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/qincai/.local/bin
