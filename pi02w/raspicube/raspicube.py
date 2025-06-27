@@ -31,7 +31,7 @@ from luma.core.render import canvas
 from luma.lcd.device import st7789
 from PIL import Image, ImageDraw, ImageFont
 
-VERSION = "v1.5.2-rpi"
+VERSION = "v1.6.0-rpi"
 
 # GPIO Pin definitions (BCM numbering)
 TIMER_PIN = 15  # GPIO 15 (Physical pin 10) - Timer control (GP15 equivalent)
