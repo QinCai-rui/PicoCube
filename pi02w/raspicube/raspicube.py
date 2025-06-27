@@ -206,7 +206,7 @@ class PiCubeTimer:
                 self.device.display(self.timer_buffer)
             
             self.last_timer_str = timer_str
-    
+
     def clear_timer_buffer(self):
         """Clear the timer buffer"""
         self.timer_draw.rectangle([(0, 0), (DISPLAY_WIDTH, DISPLAY_HEIGHT)], fill=Colors.BLACK)
