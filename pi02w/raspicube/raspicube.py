@@ -371,12 +371,14 @@ class PiCubeTimer:
             y += 18
             self.draw_text(draw, ao12_str, 10, y, self.font_manager.small_font, Colors.CYAN)
             
+            '''
             # Prompt
             prompt = "GP19: Clear | GP15: Exit"
             prompt_bbox = draw.textbbox((0, 0), prompt, font=self.font_manager.small_font)
             prompt_width = prompt_bbox[2] - prompt_bbox[0]
             x_prompt = max(0, (DISPLAY_WIDTH - prompt_width) // 2)
             self.draw_text(draw, prompt, x_prompt, DISPLAY_HEIGHT - 30, self.font_manager.small_font, Colors.MAGENTA)
+            '''
             
             # Version
             version_bbox = draw.textbbox((0, 0), VERSION, font=self.font_manager.small_font)
