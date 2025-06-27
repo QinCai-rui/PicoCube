@@ -264,7 +264,7 @@ class PiCubeTimer:
         """Display scramble screen"""
         def draw_scramble(draw):
             # Title
-            title = "RasPiCube - PicoCube"
+            title = "RasPiCubeZero"
             title_bbox = draw.textbbox((0, 0), title, font=self.font_manager.big_font)
             title_width = title_bbox[2] - title_bbox[0]
             x_title = max(0, (DISPLAY_WIDTH - title_width) // 2)
