@@ -33,7 +33,7 @@ from luma.core.render import canvas
 from luma.lcd.device import st7789
 from PIL import Image, ImageDraw, ImageFont
 
-VERSION = "v1.6.4-rpi"
+VERSION = "v1.6.5-rpi"
 
 # GPIO Pin definitions (BCM numbering)
 TIMER_PIN = 26
