@@ -20,9 +20,17 @@ import time
 import random
 import json
 import os
+import logging
 from pathlib import Path
-#from datetime import datetime
-#import sys
+# from datetime import datetime
+# import sys
+
+# Set up logging so systemd and journalctl will capture the output
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s %(message)s'
+)
+logger = logging.getLogger("raspicube")
 
 # GPIO libraries for Pi
 import RPi.GPIO as GPIO
@@ -112,8 +120,8 @@ class PiCubeTimer:
         self.last_touch_time = self.ticks_ms()
         self.backlight_on = True
         
-        print("🚀 RasPiCube Timer initialized!")
-        print(f"📝 Results file: {RESULTS_FILE}")
+        logger.info("🚀 RasPiCube Timer initialized!")
+        logger.info(f"📝 Results file: {RESULTS_FILE}")
     
     def setup_gpio(self):
         """Initialize GPIO pins"""
@@ -121,7 +129,7 @@ class PiCubeTimer:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(TIMER_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(NEXT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        print("✅ GPIO initialized")
+        logger.info("✅ GPIO initialized")
     
     def setup_display(self):
         """Initialize the ST7789 display using luma.lcd"""
@@ -132,13 +140,13 @@ class PiCubeTimer:
             # Initialize ST7789 device
             self.device = st7789(self.serial, width=DISPLAY_WIDTH, height=DISPLAY_HEIGHT, rotate=0)
             
-            print("✅ ST7789 display initialized with 80MHz SPI")
+            logger.info("✅ ST7789 display initialized with 80MHz SPI")
             
             # Initialize with black screen
             self.fill_screen(Colors.BLACK)
             
         except Exception as e:
-            print(f"❌ Failed to initialize display: {e}")
+            logger.error(f"❌ Failed to initialize display: {e}")
             self.device = None
     
     def setup_timer_buffer(self):
@@ -167,7 +175,7 @@ class PiCubeTimer:
                 with canvas(self.device) as draw:
                     draw.rectangle(self.device.bounding_box, fill=color)
             except Exception as e:
-                print(f"Display error in fill_screen: {e}")
+                logger.error(f"Display error in fill_screen: {e}")
     
     def draw_text(self, draw, text, x, y, font, color):
         """Draw text with the given parameters"""
@@ -180,7 +188,7 @@ class PiCubeTimer:
                 with canvas(self.device) as draw:
                     draw_func(draw)
             except Exception as e:
-                print(f"Display error: {e}")
+                logger.error(f"Display error: {e}")
     
     # OPTIMIZED TIMER DISPLAY - Fast updates with frame buffer
     def display_timer_fast(self, time_val, running=True):
@@ -250,24 +258,24 @@ class PiCubeTimer:
                 with open(RESULTS_FILE, "r") as f:
                     return json.load(f)
             else:
-                print(f"⚠️ No existing results file found at {RESULTS_FILE}")
+                logger.warning(f"⚠️ No existing results file found at {RESULTS_FILE}")
                 return []
         except json.JSONDecodeError as e:
-            print(f"⚠️ Error reading results file: Invalid JSON format - {e}")
+            logger.warning(f"⚠️ Error reading results file: Invalid JSON format - {e}")
             # Backup corrupted file
             if os.path.exists(RESULTS_FILE):
                 backup = f"{RESULTS_FILE}.bak"
                 try:
                     os.rename(RESULTS_FILE, backup)
-                    print(f"📦 Corrupted file backed up to {backup}")
+                    logger.info(f"📦 Corrupted file backed up to {backup}")
                 except OSError as e:
-                    print(f"❌ Failed to backup corrupted file: {e}")
+                    logger.error(f"❌ Failed to backup corrupted file: {e}")
             return []
         except OSError as e:
-            print(f"⚠️ Error accessing results file: {e}")
+            logger.warning(f"⚠️ Error accessing results file: {e}")
             return []
         except Exception as e:
-            print(f"⚠️ Unexpected error loading results: {e}")
+            logger.warning(f"⚠️ Unexpected error loading results: {e}")
             return []
 
     def save_times(self, times):
@@ -285,14 +293,14 @@ class PiCubeTimer:
             os.rename(temp_file, RESULTS_FILE)
             
         except OSError as e:
-            print(f"❌ Error saving times: {e}")
+            logger.error(f"❌ Error saving times: {e}")
             if os.path.exists(temp_file):
                 try:
                     os.remove(temp_file)
                 except:
                     pass
         except Exception as e:
-            print(f"❌ Unexpected error saving times: {e}")
+            logger.error(f"❌ Unexpected error saving times: {e}")
             if os.path.exists(temp_file):
                 try:
                     os.remove(temp_file)
@@ -306,7 +314,7 @@ class PiCubeTimer:
             with open(RESULTS_FILE, "w") as f:
                 json.dump([], f)
         except Exception as e:
-            print(f"❌ Error clearing times: {e}")
+            logger.error(f"❌ Error clearing times: {e}")
     
     def generate_scramble(self, n_moves=20):
         """Generate a random Rubik's cube scramble"""
@@ -386,7 +394,7 @@ class PiCubeTimer:
             self.draw_text(draw, VERSION, x_version, y_version, self.font_manager.small_font, Colors.RED)
         
         self.create_display_image(draw_scramble)
-        print(f"🎲 Scramble: {scramble}")
+        logger.info(f"🎲 Scramble: {scramble}")
     
     def display_timer(self, time_val, running=True):
         """Display timer (fallback for non-optimized screens)"""
@@ -403,7 +411,7 @@ class PiCubeTimer:
             self.draw_text(draw, timer_str, x_timer, y_timer, self.font_manager.big_font, color)
         
         self.create_display_image(draw_timer)
-        print(f"⏱️  {time_val:.2f}s")
+        logger.info(f"⏱️  {time_val:.2f}s")
     
     def display_results_and_avgs(self, latest_time, times, clear_msg=False):
         """Display solve results and averages"""
@@ -471,13 +479,13 @@ class PiCubeTimer:
         
         self.create_display_image(draw_results)
         
-        print(f"📊 Latest: {latest_time:.2f}s")
+        logger.info(f"📊 Latest: {latest_time:.2f}s")
         ao5 = self.avg_of(times, 5)
         ao12 = self.avg_of(times, 12)
         if ao5:
-            print(f"📊 ao5: {ao5:.2f}s")
+            logger.info(f"📊 ao5: {ao5:.2f}s")
         if ao12:
-            print(f"📊 ao12: {ao12:.2f}s")
+            logger.info(f"📊 ao12: {ao12:.2f}s")
     
     def display_are_you_sure(self):
         """Display confirmation dialog"""
@@ -502,7 +510,7 @@ class PiCubeTimer:
             self.draw_text(draw, VERSION, x_version, y_version, self.font_manager.small_font, Colors.RED)
         
         self.create_display_image(draw_confirm)
-        print("❓ Are you sure you want to clear history?")
+        logger.info("❓ Are you sure you want to clear history?")
     
     def display_timer_prep(self, message, color):
         """Display timer preparation screen"""
@@ -794,30 +802,30 @@ class PiCubeTimer:
                                             break
         
         except KeyboardInterrupt:
-            print("\n👋 Goodbye!")
+            logger.info("\n👋 Goodbye!")
         except Exception as e:
-            print(f"❌ Error: {e}")
+            logger.error(f"❌ Error: {e}")
             import traceback
             traceback.print_exc()
         finally:
             GPIO.cleanup()
-            print("🧹 GPIO cleaned up")
+            logger.info("🧹 GPIO cleaned up")
 
 if __name__ == "__main__":
-    print("🚀 Starting RasPiCube Timer for Pi Zero 2W...")
-    print("🔌 Hardware should be connected as follows:")
-    print("   Timer Button:  GPIO 26 (Physical pin 37) -> Button -> GND")
-    print("   Next Button:   GPIO 19 (Physical pin 35) -> Button -> GND")
-    print("   ST7789 Display:")
-    print("     VCC -> 3.3V, GND -> GND")
-    print("     SCL -> GPIO 11 (SCLK), SDA -> GPIO 10 (MOSI)")
-    print("     RES -> GPIO 25, DC -> GPIO 24, CS -> GPIO 8 (CE0)")
-    print("")
-    print("📦 Required packages:")
-    print("   pip3 install luma.lcd RPi.GPIO pillow")
-    print("")
-    print("⚡ OPTIMIZED: Fast timer display with 20+ FPS updates!")
-    print("")
+    logger.info("🚀 Starting RasPiCube Timer for Pi Zero 2W...")
+    logger.info("🔌 Hardware should be connected as follows:")
+    logger.info("   Timer Button:  GPIO 26 (Physical pin 37) -> Button -> GND")
+    logger.info("   Next Button:   GPIO 19 (Physical pin 35) -> Button -> GND")
+    logger.info("   ST7789 Display:")
+    logger.info("     VCC -> 3.3V, GND -> GND")
+    logger.info("     SCL -> GPIO 11 (SCLK), SDA -> GPIO 10 (MOSI)")
+    logger.info("     RES -> GPIO 25, DC -> GPIO 24, CS -> GPIO 8 (CE0)")
+    logger.info("")
+    logger.info("📦 Required packages:")
+    logger.info("   pip3 install luma.lcd RPi.GPIO pillow")
+    logger.info("")
+    logger.info("⚡ OPTIMIZED: Fast timer display with 20+ FPS updates!")
+    logger.info("")
     
     timer = PiCubeTimer()
     timer.main()
