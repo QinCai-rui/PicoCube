@@ -82,7 +82,7 @@ class OptimizedPiCubeTimer:
         """Initialize the ST7789 display"""
         try:
             # Initialize SPI interface with higher speed
-            self.serial = spi(port=0, device=0, gpio_DC=24, gpio_RST=25, spi_speed_hz=64000000)
+            self.serial = spi(port=0, device=0, gpio_DC=24, gpio_RST=25, spi_speed_hz=80000000)
             self.device = st7789(self.serial, width=DISPLAY_WIDTH, height=DISPLAY_HEIGHT, rotate=0)
             print("✅ ST7789 display initialized with optimized SPI speed")
         except Exception as e:
