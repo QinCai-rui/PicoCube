@@ -18,10 +18,10 @@ from luma.core.interface.serial import spi
 from luma.lcd.device import st7789
 from PIL import Image, ImageDraw, ImageFont
 
-VERSION = "v1.5.3-rpi-optimized"
+VERSION = "v1.6.2-rpi"
 
 # GPIO Pin definitions (BCM numbering)
-TIMER_PIN = 15
+TIMER_PIN = 26
 NEXT_PIN = 19
 
 # Display dimensions
