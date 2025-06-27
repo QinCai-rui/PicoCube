@@ -22,33 +22,26 @@ import os
 from datetime import datetime
 import sys
 
-# GPIO and SPI libraries for Pi
+# GPIO libraries for Pi
 import RPi.GPIO as GPIO
-import spidev
+
+# Display libraries - using luma.lcd instead of st7789
+from luma.core.interface.serial import spi
+from luma.core.render import canvas
+from luma.lcd.device import st7789
 from PIL import Image, ImageDraw, ImageFont
-import numpy as np
 
-# Try to import ST7789 library
-try:
-    import st7789
-    HAS_ST7789 = True
-except ImportError:
-    print("Warning: st7789 library not found. Install with: pip3 install st7789")
-    HAS_ST7789 = False
-
-VERSION = "v1.5.1-rpi"
+VERSION = "v1.5.2-rpi"
 
 # GPIO Pin definitions (BCM numbering)
 TIMER_PIN = 15  # GPIO 15 (Physical pin 10) - Timer control (GP15 equivalent)
 NEXT_PIN = 19   # GPIO 19 (Physical pin 35) - Next scramble / show avgs (GP19 equivalent)
 
-# Display dimensions (same as Pico)
-TFT_WIDTH = 240  
-TFT_HEIGHT = 320
-REAL_WIDTH = 320  # Physical dimensions in landscape mode
-REAL_HEIGHT = 240
+# Display dimensions - using actual ST7789 resolution
+DISPLAY_WIDTH = 320
+DISPLAY_HEIGHT = 240
 
-# ST7789 Colors (matching Pico st7789 library)
+# Colors (RGB tuples)
 class Colors:
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -82,13 +75,13 @@ class FontManager:
         ]
         
         # Font sizes matching Pico's vga1_16x32 and vga1_8x16
-        self.big_font = self._load_font(24)    # Matches vga1_16x32 appearance
-        self.small_font = self._load_font(12)  # Matches vga1_8x16 appearance
+        self.big_font = self._load_font(28)    # Larger for 320x240 display
+        self.small_font = self._load_font(14)  # Adjusted for readability
         
-        # Calculate font metrics (matching Pico's font.WIDTH and font.HEIGHT)
-        self.big_width = 16
+        # Calculate font metrics
+        self.big_width = 18
         self.big_height = 32
-        self.small_width = 8
+        self.small_width = 9
         self.small_height = 16
     
     def _load_font(self, size):
@@ -116,37 +109,29 @@ class PiCubeTimer:
     
     def setup_gpio(self):
         """Initialize GPIO pins"""
+        GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(TIMER_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(NEXT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         print("✅ GPIO initialized")
     
     def setup_display(self):
-        """Initialize the ST7789 display"""
-        if HAS_ST7789:
-            try:
-                self.disp = st7789.ST7789(
-                    port=0,        # SPI port
-                    cs=0,          # CE0
-                    dc=24,         # GPIO 24
-                    rst=25,        # GPIO 25  
-                    backlight=23,  # GPIO 23
-                    spi_speed_hz=40000000,
-                    width=TFT_WIDTH,
-                    height=TFT_HEIGHT,
-                    rotation=0
-                )
-                print("✅ ST7789 display initialized")
-                
-                # Initialize with black screen
-                self.fill(Colors.BLACK)
-                
-            except Exception as e:
-                print(f"❌ Failed to initialize display: {e}")
-                self.disp = None
-        else:
-            print("⚠️  Running in headless mode (no display)")
-            self.disp = None
+        """Initialize the ST7789 display using luma.lcd"""
+        try:
+            # Initialize SPI interface
+            self.serial = spi(port=0, device=0, gpio_DC=24, gpio_RST=25)
+            
+            # Initialize ST7789 device
+            self.device = st7789(self.serial, width=DISPLAY_WIDTH, height=DISPLAY_HEIGHT, rotate=0)
+            
+            print("✅ ST7789 display initialized with luma.lcd")
+            
+            # Initialize with black screen
+            self.fill_screen(Colors.BLACK)
+            
+        except Exception as e:
+            print(f"❌ Failed to initialize display: {e}")
+            self.device = None
     
     def ticks_ms(self):
         """Get current time in milliseconds (like Pico's time.ticks_ms())"""
@@ -160,82 +145,34 @@ class PiCubeTimer:
         """Sleep for milliseconds (like Pico's time.sleep_ms())"""
         time.sleep(ms / 1000.0)
     
-    # Display functions (matching Pico st7789 API)
-    def fill(self, color):
+    # Display functions using luma.lcd
+    def fill_screen(self, color):
         """Fill entire screen with color"""
-        if self.disp:
+        if self.device:
             try:
-                image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), color)
-                self.disp.display(image)
+                with canvas(self.device) as draw:
+                    draw.rectangle(self.device.bounding_box, fill=color)
             except Exception as e:
-                print(f"Display error in fill: {e}")
+                print(f"Display error in fill_screen: {e}")
     
-    def fill_rect(self, x, y, width, height, color):
-        """Fill rectangle with color"""
-        if self.disp:
-            try:
-                # Get current image or create new one
-                image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), Colors.BLACK)
-                draw = ImageDraw.Draw(image)
-                draw.rectangle([x, y, x + width - 1, y + height - 1], fill=color)
-                self.disp.display(image)
-            except Exception as e:
-                print(f"Display error in fill_rect: {e}")
-    
-    def text(self, font_type, text, x, y, color):
-        """Display text (matching Pico's tft.text() API)"""
-        if self.disp:
-            try:
-                image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), Colors.BLACK)
-                draw = ImageDraw.Draw(image)
-                
-                # Select font based on type
-                if font_type == "big":
-                    font = self.font_manager.big_font
-                else:
-                    font = self.font_manager.small_font
-                
-                draw.text((x, y), text, font=font, fill=color)
-                self.disp.display(image)
-            except Exception as e:
-                print(f"Display error in text: {e}")
-        
-        # Always print to console as well
-        print(f"📺 {text}")
-    
-    def text_on_image(self, image, font_type, text, x, y, color):
-        """Draw text on existing image"""
-        draw = ImageDraw.Draw(image)
-        
-        # Select font based on type
-        if font_type == "big":
-            font = self.font_manager.big_font
-        else:
-            font = self.font_manager.small_font
-        
+    def draw_text(self, draw, text, x, y, font, color):
+        """Draw text with the given parameters"""
         draw.text((x, y), text, font=font, fill=color)
     
-    def display_image(self, image):
-        """Display PIL image"""
-        if self.disp:
+    def create_display_image(self, draw_func):
+        """Create and display an image using the provided drawing function"""
+        if self.device:
             try:
-                self.disp.display(image)
+                with canvas(self.device) as draw:
+                    draw_func(draw)
             except Exception as e:
                 print(f"Display error: {e}")
     
-    # Backlight management (matching Pico functionality)
+    # Backlight management
     def set_backlight(self, state):
         """Set the backlight state"""
         self.backlight_on = state
-        if self.disp and hasattr(self.disp, '_backlight'):
-            try:
-                if hasattr(self.disp._backlight, 'value'):
-                    self.disp._backlight.value = 1 if state else 0
-                else:
-                    # Try different backlight control methods
-                    pass
-            except:
-                pass
+        # Note: luma.lcd handles backlight automatically
     
     def update_touch_time(self):
         """Update the last touch time and wake backlight if needed"""
@@ -255,7 +192,7 @@ class PiCubeTimer:
         """Check if any button is pressed"""
         return GPIO.input(TIMER_PIN) or GPIO.input(NEXT_PIN)
     
-    # Core timer functions (matching Pico implementation exactly)
+    # Core timer functions (same as original)
     def load_times(self):
         """Load solve times from file"""
         try:
@@ -281,7 +218,7 @@ class PiCubeTimer:
             print(e)
     
     def generate_scramble(self, n_moves=20):
-        """Generate a random Rubik's cube scramble (exact Pico implementation)"""
+        """Generate a random Rubik's cube scramble"""
         scramble = []
         prev = None
         for _ in range(n_moves):
@@ -294,8 +231,8 @@ class PiCubeTimer:
             prev = f
         return " ".join(scramble)
     
-    def wrap_scramble(self, scramble, max_line_len=15):
-        """Wrap scramble text into lines (exact Pico implementation)"""
+    def wrap_scramble(self, scramble, max_line_len=18):
+        """Wrap scramble text into lines (adjusted for wider display)"""
         words = scramble.split()
         lines = []
         current = ""
@@ -310,203 +247,227 @@ class PiCubeTimer:
         return lines
     
     def avg_of(self, times, count):
-        """Calculate average of count solves with trimming (exact Pico implementation)"""
+        """Calculate average of count solves with trimming"""
         if len(times) < count:
             return None
         
         # Get the most recent 'count' times
         recent_times = [entry["time"] for entry in times[-count:]]
         
-        # For ao5 and ao12, trim the best and worst times according to WCA standards
+        # For ao5 and ao12, trim the best and worst times
         sorted_times = sorted(recent_times)
         trimmed = sorted_times[1:-1]  # Remove best and worst
         return sum(trimmed) / len(trimmed)
     
-    # Display functions (exact Pico implementations)
-    def draw_version(self):
-        """Draw version in bottom-right corner (exact Pico implementation)"""
-        if not self.disp:
-            return
-            
-        version_str = VERSION
-        
-        # Calculate version string width
-        version_width = self.font_manager.small_width * len(version_str)
-        
-        # Calculate position - preserve the right and bottom offsets that worked
-        x = 255 - (version_width - len("v1.1.0") * self.font_manager.small_width)
-        y = 210
-        
-        # Create image for just the version area
-        image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), Colors.BLACK)
-        
-        # Clear background area with a bit of padding
-        draw = ImageDraw.Draw(image)
-        draw.rectangle([x-2, y-2, x+version_width+2, y+self.font_manager.small_height+2], fill=Colors.BLACK)
-        
-        # Draw version text
-        self.text_on_image(image, "small", version_str, x, y, Colors.RED)
-        self.display_image(image)
-    
+    # Display functions using luma.lcd
     def display_scramble(self, scramble):
-        """Display scramble screen (exact Pico implementation)"""
-        image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), Colors.BLACK)
-        
-        # Title
-        title = "RasPiCube - PicoCube"
-        x_title = max(0, (TFT_WIDTH - self.font_manager.big_width * len(title)) // 2)
-        self.text_on_image(image, "big", title, x_title, 10, Colors.CYAN)
-        
-        # Subtitle
-        subtitle = "Hold GP15 to prep"
-        x_sub = max(0, (TFT_WIDTH - self.font_manager.big_width * len(subtitle)) // 2)
-        self.text_on_image(image, "big", subtitle, x_sub, 45, Colors.YELLOW)
-        
-        # Scramble text
-        lines = self.wrap_scramble(scramble)
-        block_height = len(lines) * 35
-        y = max(70, (TFT_HEIGHT - block_height) // 2)
-        for line in lines:
-            x_line = max(0, (TFT_WIDTH - self.font_manager.big_width * len(line)) // 2)
-            self.text_on_image(image, "big", line, x_line, y, Colors.WHITE)
-            y += 35
-        
-        # Version
-        version_str = VERSION
-        version_width = self.font_manager.small_width * len(version_str)
-        x = 255 - (version_width - len("v1.1.0") * self.font_manager.small_width)
-        y = 210
-        draw = ImageDraw.Draw(image)
-        draw.rectangle([x-2, y-2, x+version_width+2, y+self.font_manager.small_height+2], fill=Colors.BLACK)
-        self.text_on_image(image, "small", version_str, x, y, Colors.RED)
-        
-        self.display_image(image)
-        print(f"🎲 Scramble: {scramble}")
-    
-    def display_timer(self, time_val, running=True, clear_all=False):
-        """Display timer (exact Pico implementation)"""
-        if clear_all:
-            image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), Colors.BLACK)
-        else:
-            image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), Colors.BLACK)
-        
-        timer_str = "{:6.1f}".format(time_val) if running else "{:6.2f}".format(time_val)
-        x_timer = max(0, (TFT_WIDTH - self.font_manager.big_width * len(timer_str)) // 2)
-        y_timer = (TFT_HEIGHT - self.font_manager.big_height) // 2
-        
-        # Clear the rectangle where the time will be displayed
-        draw = ImageDraw.Draw(image)
-        timer_width = self.font_manager.big_width * len(timer_str)
-        draw.rectangle([x_timer, y_timer, x_timer + timer_width, y_timer + self.font_manager.big_height], fill=Colors.BLACK)
-        
-        color = Colors.GREEN if running else Colors.CYAN
-        self.text_on_image(image, "big", timer_str, x_timer, y_timer, color)
-        self.display_image(image)
-        
-        print(f"⏱️  {timer_str}")
-    
-    def display_results_and_avgs(self, latest_time, times, clear_msg=False):
-        """Display solve results and averages (exact Pico implementation)"""
-        image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), Colors.BLACK)
-        
-        # Title
-        title = "Solve Results"
-        x_title = max(0, (TFT_WIDTH - self.font_manager.small_width * len(title)) // 2)
-        self.text_on_image(image, "small", title, x_title, 10, Colors.CYAN)
-        
-        if clear_msg:
-            msg = "History Cleared!"
-            x_msg = max(0, (TFT_WIDTH - self.font_manager.small_width * len(msg)) // 2)
-            self.text_on_image(image, "small", msg, x_msg, 30, Colors.RED)
-            prompt = "Tap GP15 to exit"
-            x_prompt = max(0, (TFT_WIDTH - self.font_manager.small_width * len(prompt)) // 2)
-            self.text_on_image(image, "small", prompt, x_prompt, TFT_HEIGHT - self.font_manager.small_height - 4, Colors.MAGENTA)
+        """Display scramble screen"""
+        def draw_scramble(draw):
+            # Title
+            title = "RasPiCube - PicoCube"
+            title_bbox = draw.textbbox((0, 0), title, font=self.font_manager.big_font)
+            title_width = title_bbox[2] - title_bbox[0]
+            x_title = max(0, (DISPLAY_WIDTH - title_width) // 2)
+            self.draw_text(draw, title, x_title, 10, self.font_manager.big_font, Colors.CYAN)
+            
+            # Subtitle
+            subtitle = "Hold GP15 to prep"
+            subtitle_bbox = draw.textbbox((0, 0), subtitle, font=self.font_manager.big_font)
+            subtitle_width = subtitle_bbox[2] - subtitle_bbox[0]
+            x_sub = max(0, (DISPLAY_WIDTH - subtitle_width) // 2)
+            self.draw_text(draw, subtitle, x_sub, 50, self.font_manager.big_font, Colors.YELLOW)
+            
+            # Scramble text
+            lines = self.wrap_scramble(scramble)
+            y = 90
+            for line in lines:
+                line_bbox = draw.textbbox((0, 0), line, font=self.font_manager.big_font)
+                line_width = line_bbox[2] - line_bbox[0]
+                x_line = max(0, (DISPLAY_WIDTH - line_width) // 2)
+                self.draw_text(draw, line, x_line, y, self.font_manager.big_font, Colors.WHITE)
+                y += 35
             
             # Version
-            version_str = VERSION
-            version_width = self.font_manager.small_width * len(version_str)
-            x = 255 - (version_width - len("v1.1.0") * self.font_manager.small_width)
-            y = 210
-            draw = ImageDraw.Draw(image)
-            draw.rectangle([x-2, y-2, x+version_width+2, y+self.font_manager.small_height+2], fill=Colors.BLACK)
-            self.text_on_image(image, "small", version_str, x, y, Colors.RED)
+            version_bbox = draw.textbbox((0, 0), VERSION, font=self.font_manager.small_font)
+            version_width = version_bbox[2] - version_bbox[0]
+            x_version = DISPLAY_WIDTH - version_width - 10
+            y_version = DISPLAY_HEIGHT - 25
+            self.draw_text(draw, VERSION, x_version, y_version, self.font_manager.small_font, Colors.RED)
+        
+        self.create_display_image(draw_scramble)
+        print(f"🎲 Scramble: {scramble}")
+    
+    def display_timer(self, time_val, running=True):
+        """Display timer"""
+        def draw_timer(draw):
+            timer_str = "{:6.1f}".format(time_val) if running else "{:6.2f}".format(time_val)
+            timer_bbox = draw.textbbox((0, 0), timer_str, font=self.font_manager.big_font)
+            timer_width = timer_bbox[2] - timer_bbox[0]
+            timer_height = timer_bbox[3] - timer_bbox[1]
             
-            self.display_image(image)
-            print("🗑️  History Cleared!")
-            return
+            x_timer = max(0, (DISPLAY_WIDTH - timer_width) // 2)
+            y_timer = (DISPLAY_HEIGHT - timer_height) // 2
+            
+            color = Colors.GREEN if running else Colors.CYAN
+            self.draw_text(draw, timer_str, x_timer, y_timer, self.font_manager.big_font, color)
         
-        # Latest time
-        s = "Latest: {:.2f}".format(latest_time)
-        self.text_on_image(image, "small", s, 10, 40, Colors.GREEN)
+        self.create_display_image(draw_timer)
+        print(f"⏱️  {time_val:.2f}s")
+    
+    def display_results_and_avgs(self, latest_time, times, clear_msg=False):
+        """Display solve results and averages"""
+        def draw_results(draw):
+            # Title
+            title = "Solve Results"
+            title_bbox = draw.textbbox((0, 0), title, font=self.font_manager.small_font)
+            title_width = title_bbox[2] - title_bbox[0]
+            x_title = max(0, (DISPLAY_WIDTH - title_width) // 2)
+            self.draw_text(draw, title, x_title, 10, self.font_manager.small_font, Colors.CYAN)
+            
+            if clear_msg:
+                msg = "History Cleared!"
+                msg_bbox = draw.textbbox((0, 0), msg, font=self.font_manager.small_font)
+                msg_width = msg_bbox[2] - msg_bbox[0]
+                x_msg = max(0, (DISPLAY_WIDTH - msg_width) // 2)
+                self.draw_text(draw, msg, x_msg, 35, self.font_manager.small_font, Colors.RED)
+                
+                prompt = "Tap GP15 to exit"
+                prompt_bbox = draw.textbbox((0, 0), prompt, font=self.font_manager.small_font)
+                prompt_width = prompt_bbox[2] - prompt_bbox[0]
+                x_prompt = max(0, (DISPLAY_WIDTH - prompt_width) // 2)
+                self.draw_text(draw, prompt, x_prompt, DISPLAY_HEIGHT - 30, self.font_manager.small_font, Colors.MAGENTA)
+                
+                # Version
+                version_bbox = draw.textbbox((0, 0), VERSION, font=self.font_manager.small_font)
+                version_width = version_bbox[2] - version_bbox[0]
+                x_version = DISPLAY_WIDTH - version_width - 10
+                y_version = DISPLAY_HEIGHT - 25
+                self.draw_text(draw, VERSION, x_version, y_version, self.font_manager.small_font, Colors.RED)
+                return
+            
+            # Latest time
+            latest_str = "Latest: {:.2f}".format(latest_time)
+            self.draw_text(draw, latest_str, 10, 35, self.font_manager.small_font, Colors.GREEN)
+            
+            # Last 5 times
+            y = 55
+            self.draw_text(draw, "Last 5:", 10, y, self.font_manager.small_font, Colors.YELLOW)
+            for i, entry in enumerate(times[-5:][::-1]):
+                t = entry["time"]
+                time_str = "{:2d}: {:.2f}".format(len(times)-i, t)
+                self.draw_text(draw, time_str, 80, y, self.font_manager.small_font, Colors.WHITE)
+                y += 18
+            
+            y += 10
+            
+            # Averages
+            ao5 = self.avg_of(times, 5)
+            ao12 = self.avg_of(times, 12)
+            
+            ao5_str = "ao5:  --.--" if ao5 is None else "ao5: {:.2f}".format(ao5)
+            ao12_str = "ao12: --.--" if ao12 is None else "ao12: {:.2f}".format(ao12)
+            
+            self.draw_text(draw, ao5_str, 10, y, self.font_manager.small_font, Colors.CYAN)
+            y += 18
+            self.draw_text(draw, ao12_str, 10, y, self.font_manager.small_font, Colors.CYAN)
+            
+            # Prompt
+            prompt = "GP19: Clear | GP15: Exit"
+            prompt_bbox = draw.textbbox((0, 0), prompt, font=self.font_manager.small_font)
+            prompt_width = prompt_bbox[2] - prompt_bbox[0]
+            x_prompt = max(0, (DISPLAY_WIDTH - prompt_width) // 2)
+            self.draw_text(draw, prompt, x_prompt, DISPLAY_HEIGHT - 30, self.font_manager.small_font, Colors.MAGENTA)
+            
+            # Version
+            version_bbox = draw.textbbox((0, 0), VERSION, font=self.font_manager.small_font)
+            version_width = version_bbox[2] - version_bbox[0]
+            x_version = DISPLAY_WIDTH - version_width - 10
+            y_version = DISPLAY_HEIGHT - 25
+            self.draw_text(draw, VERSION, x_version, y_version, self.font_manager.small_font, Colors.RED)
         
-        # Last 5 times
-        y = 60
-        self.text_on_image(image, "small", "Last 5:", 10, y, Colors.YELLOW)
-        for i, entry in enumerate(times[-5:][::-1]):
-            t = entry["time"]
-            self.text_on_image(image, "small", "{:2d}: {:.2f}".format(len(times)-i, t), 70, y, Colors.WHITE)
-            y += self.font_manager.small_height + 2
-        
-        y += 10
-        
-        # Averages
-        ao5 = self.avg_of(times, 5)
-        ao12 = self.avg_of(times, 12)
-        
-        ao5_str = "ao5:  --.--" if ao5 is None else "ao5: {:.2f}".format(ao5)
-        ao12_str = "ao12: --.--" if ao12 is None else "ao12: {:.2f}".format(ao12)
-        
-        self.text_on_image(image, "small", ao5_str, 10, y, Colors.CYAN)
-        y += self.font_manager.small_height + 2
-        self.text_on_image(image, "small", ao12_str, 10, y, Colors.CYAN)
-        
-        # Prompt
-        prompt = "GP19: Clear | GP15: Exit"
-        x_prompt = max(0, (TFT_WIDTH - self.font_manager.small_width * len(prompt)) // 2)
-        self.text_on_image(image, "small", prompt, x_prompt, TFT_HEIGHT - self.font_manager.small_height - 4, Colors.MAGENTA)
-        
-        # Version
-        version_str = VERSION
-        version_width = self.font_manager.small_width * len(version_str)
-        x = 255 - (version_width - len("v1.1.0") * self.font_manager.small_width)
-        y = 210
-        draw = ImageDraw.Draw(image)
-        draw.rectangle([x-2, y-2, x+version_width+2, y+self.font_manager.small_height+2], fill=Colors.BLACK)
-        self.text_on_image(image, "small", version_str, x, y, Colors.RED)
-        
-        self.display_image(image)
+        self.create_display_image(draw_results)
         
         print(f"📊 Latest: {latest_time:.2f}s")
+        ao5 = self.avg_of(times, 5)
+        ao12 = self.avg_of(times, 12)
         if ao5:
             print(f"📊 ao5: {ao5:.2f}s")
         if ao12:
             print(f"📊 ao12: {ao12:.2f}s")
     
     def display_are_you_sure(self):
-        """Display confirmation dialog (exact Pico implementation)"""
-        image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), Colors.BLACK)
+        """Display confirmation dialog"""
+        def draw_confirm(draw):
+            msg = "Are you sure?"
+            msg_bbox = draw.textbbox((0, 0), msg, font=self.font_manager.small_font)
+            msg_width = msg_bbox[2] - msg_bbox[0]
+            x_msg = max(0, (DISPLAY_WIDTH - msg_width) // 2)
+            self.draw_text(draw, msg, x_msg, 60, self.font_manager.small_font, Colors.YELLOW)
+            
+            msg2 = "GP19: Clear | GP15: Cancel"
+            msg2_bbox = draw.textbbox((0, 0), msg2, font=self.font_manager.small_font)
+            msg2_width = msg2_bbox[2] - msg2_bbox[0]
+            x_msg2 = max(0, (DISPLAY_WIDTH - msg2_width) // 2)
+            self.draw_text(draw, msg2, x_msg2, 120, self.font_manager.small_font, Colors.MAGENTA)
+            
+            # Version
+            version_bbox = draw.textbbox((0, 0), VERSION, font=self.font_manager.small_font)
+            version_width = version_bbox[2] - version_bbox[0]
+            x_version = DISPLAY_WIDTH - version_width - 10
+            y_version = DISPLAY_HEIGHT - 25
+            self.draw_text(draw, VERSION, x_version, y_version, self.font_manager.small_font, Colors.RED)
         
-        msg = "Are you sure?"
-        x_msg = max(0, (TFT_WIDTH - self.font_manager.small_width * len(msg)) // 2)
-        self.text_on_image(image, "small", msg, x_msg, 40, Colors.YELLOW)
-        
-        msg2 = "GP19: Clear | GP15: Cancel"
-        x_msg2 = max(0, (TFT_WIDTH - self.font_manager.small_width * len(msg2)) // 2)
-        self.text_on_image(image, "small", msg2, x_msg2, 90, Colors.MAGENTA)
-        
-        # Version
-        version_str = VERSION
-        version_width = self.font_manager.small_width * len(version_str)
-        x = 255 - (version_width - len("v1.1.0") * self.font_manager.small_width)
-        y = 210
-        draw = ImageDraw.Draw(image)
-        draw.rectangle([x-2, y-2, x+version_width+2, y+self.font_manager.small_height+2], fill=Colors.BLACK)
-        self.text_on_image(image, "small", version_str, x, y, Colors.RED)
-        
-        self.display_image(image)
+        self.create_display_image(draw_confirm)
         print("❓ Are you sure you want to clear history?")
     
-    # Button handling functions (exact Pico implementations with touch-to-wake)
+    def display_timer_prep(self, message, color):
+        """Display timer preparation screen"""
+        def draw_prep(draw):
+            # Title
+            title = "RasPiCube - PicoCube"
+            title_bbox = draw.textbbox((0, 0), title, font=self.font_manager.big_font)
+            title_width = title_bbox[2] - title_bbox[0]
+            x_title = max(0, (DISPLAY_WIDTH - title_width) // 2)
+            self.draw_text(draw, title, x_title, 10, self.font_manager.big_font, Colors.CYAN)
+            
+            # Message
+            msg_bbox = draw.textbbox((0, 0), message, font=self.font_manager.big_font)
+            msg_width = msg_bbox[2] - msg_bbox[0]
+            x_msg = max(0, (DISPLAY_WIDTH - msg_width) // 2)
+            self.draw_text(draw, message, x_msg, 80, self.font_manager.big_font, color)
+        
+        self.create_display_image(draw_prep)
+    
+    def display_completion(self, final_time):
+        """Display completion screen"""
+        def draw_completion(draw):
+            # Timer
+            timer_str = "{:6.2f}".format(final_time)
+            timer_bbox = draw.textbbox((0, 0), timer_str, font=self.font_manager.big_font)
+            timer_width = timer_bbox[2] - timer_bbox[0]
+            timer_height = timer_bbox[3] - timer_bbox[1]
+            
+            x_timer = max(0, (DISPLAY_WIDTH - timer_width) // 2)
+            y_timer = (DISPLAY_HEIGHT - timer_height) // 2
+            self.draw_text(draw, timer_str, x_timer, y_timer, self.font_manager.big_font, Colors.CYAN)
+            
+            # Completion message
+            subtitle = "Done! Tap GP19"
+            subtitle_bbox = draw.textbbox((0, 0), subtitle, font=self.font_manager.big_font)
+            subtitle_width = subtitle_bbox[2] - subtitle_bbox[0]
+            x_sub = max(0, (DISPLAY_WIDTH - subtitle_width) // 2)
+            self.draw_text(draw, subtitle, x_sub, 50, self.font_manager.big_font, Colors.YELLOW)
+            
+            # Version
+            version_bbox = draw.textbbox((0, 0), VERSION, font=self.font_manager.small_font)
+            version_width = version_bbox[2] - version_bbox[0]
+            x_version = DISPLAY_WIDTH - version_width - 10
+            y_version = DISPLAY_HEIGHT - 25
+            self.draw_text(draw, VERSION, x_version, y_version, self.font_manager.small_font, Colors.RED)
+        
+        self.create_display_image(draw_completion)
+    
+    # Button handling functions (same as original with touch-to-wake)
     def wait_for_touch_or_action(self, pin_check_fn, backlight_timeout=None):
         """Wait for a pin to be pressed with touch-to-wake logic"""
         while True:
@@ -586,7 +547,7 @@ class PiCubeTimer:
             self.sleep_ms(10)
     
     def timer_control(self):
-        """Timer control logic (exact Pico implementation)"""
+        """Timer control logic"""
         HOLD_TIME_MS = 400  # Minimum hold time to qualify as "ready"
         
         # Wait for button release first
@@ -595,22 +556,8 @@ class PiCubeTimer:
             self.sleep_ms(10)
         
         while True:
-            # Create image for the prep screen
-            image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), Colors.BLACK)
-            
-            # Draw title (preserve other content)
-            title = "RasPiCube - PicoCube"
-            x_title = max(0, (TFT_WIDTH - self.font_manager.big_width * len(title)) // 2)
-            self.text_on_image(image, "big", title, x_title, 10, Colors.CYAN)
-            
-            # Draw "Hold GP15 to prep" every retry
-            subtitle = "Hold GP15 to prep"
-            x_sub = max(0, (TFT_WIDTH - self.font_manager.big_width * len(subtitle)) // 2)
-            # Clear the subtitle area
-            draw = ImageDraw.Draw(image)
-            draw.rectangle([0, 45, REAL_WIDTH, 45 + self.font_manager.big_height], fill=Colors.BLACK)
-            self.text_on_image(image, "big", subtitle, x_sub, 45, Colors.YELLOW)
-            self.display_image(image)
+            # Show initial prep message
+            self.display_timer_prep("Hold GP15 to prep", Colors.YELLOW)
             
             # Wait for button press
             while not GPIO.input(TIMER_PIN):
@@ -619,36 +566,16 @@ class PiCubeTimer:
             
             hold_start = self.ticks_ms()
             held_long_enough = False
-            prev_state = ""  # Track current instruction
             
             while GPIO.input(TIMER_PIN):
                 held_time = self.ticks_diff(self.ticks_ms(), hold_start)
                 
-                # Create new image for status updates
-                image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), Colors.BLACK)
-                
-                # Preserve title
-                self.text_on_image(image, "big", title, x_title, 10, Colors.CYAN)
-                
-                # Show "Keep holding it" if under 400ms, otherwise "Release to start!"
+                # Show status based on hold time
                 if not held_long_enough and held_time < HOLD_TIME_MS:
-                    if prev_state != "keep":
-                        subtitle = "Keep holding it"
-                        x_sub = max(0, (TFT_WIDTH - self.font_manager.big_width * len(subtitle)) // 2)
-                        draw = ImageDraw.Draw(image)
-                        draw.rectangle([0, 45, REAL_WIDTH, 45 + self.font_manager.big_height], fill=Colors.BLACK)
-                        self.text_on_image(image, "big", subtitle, x_sub, 45, Colors.YELLOW)
-                        self.display_image(image)
-                        prev_state = "keep"
+                    self.display_timer_prep("Keep holding it", Colors.YELLOW)
                 elif not held_long_enough and held_time >= HOLD_TIME_MS:
                     held_long_enough = True
-                    subtitle = "Release to start!"
-                    x_sub = max(0, (TFT_WIDTH - self.font_manager.big_width * len(subtitle)) // 2)
-                    draw = ImageDraw.Draw(image)
-                    draw.rectangle([0, 45, REAL_WIDTH, 45 + self.font_manager.big_height], fill=Colors.BLACK)
-                    self.text_on_image(image, "big", subtitle, x_sub, 45, Colors.RED)
-                    self.display_image(image)
-                    prev_state = "release"
+                    self.display_timer_prep("Release to start!", Colors.RED)
                 
                 self.update_touch_time()
                 self.sleep_ms(30)
@@ -656,9 +583,8 @@ class PiCubeTimer:
             if held_long_enough:
                 break
             else:
-                # Button released too soon, loop and redraw "Hold GP15 to prep"
+                # Button released too soon, loop and try again
                 self.update_touch_time()
-                # Loop repeats, "Hold GP15 to prep" will be redrawn
         
         # Wait for button release to start timer
         while GPIO.input(TIMER_PIN):
@@ -667,10 +593,8 @@ class PiCubeTimer:
         
         timer_start = self.ticks_ms()
         self.update_touch_time()
-        running = True
-        first_update = True
         
-        update_interval = 100  # ms, how often to update LCD
+        update_interval = 100  # ms, how often to update display
         poll_interval = 10     # ms, how often to poll button
         last_update = self.ticks_ms()
         
@@ -678,8 +602,7 @@ class PiCubeTimer:
             elapsed = (self.ticks_ms() - timer_start) / 1000
             now = self.ticks_ms()
             if self.ticks_diff(now, last_update) >= update_interval:
-                self.display_timer(elapsed, running=True, clear_all=first_update)
-                first_update = False
+                self.display_timer(elapsed, running=True)
                 last_update = now
             self.sleep_ms(poll_interval)
             if GPIO.input(TIMER_PIN):
@@ -688,37 +611,14 @@ class PiCubeTimer:
                 self.update_touch_time()
         
         final_elapsed = (self.ticks_ms() - timer_start) / 1000
-        self.display_timer(final_elapsed, running=False, clear_all=True)
+        self.display_timer(final_elapsed, running=False)
         
         while GPIO.input(TIMER_PIN):
             self.update_touch_time()
             self.sleep_ms(10)
         
-        # Create completion screen
-        image = Image.new('RGB', (TFT_WIDTH, TFT_HEIGHT), Colors.BLACK)
-        
-        # Show final time
-        timer_str = "{:6.2f}".format(final_elapsed)
-        x_timer = max(0, (TFT_WIDTH - self.font_manager.big_width * len(timer_str)) // 2)
-        y_timer = (TFT_HEIGHT - self.font_manager.big_height) // 2
-        self.text_on_image(image, "big", timer_str, x_timer, y_timer, Colors.CYAN)
-        
-        # Show completion message
-        subtitle = "Done! Tap GP19"
-        x_sub = max(0, (TFT_WIDTH - self.font_manager.big_width * len(subtitle)) // 2)
-        draw = ImageDraw.Draw(image)
-        draw.rectangle([0, 45, REAL_WIDTH, 45 + self.font_manager.big_height], fill=Colors.BLACK)
-        self.text_on_image(image, "big", subtitle, x_sub, 45, Colors.YELLOW)
-        
-        # Version
-        version_str = VERSION
-        version_width = self.font_manager.small_width * len(version_str)
-        x = 255 - (version_width - len("v1.1.0") * self.font_manager.small_width)
-        y = 210
-        draw.rectangle([x-2, y-2, x+version_width+2, y+self.font_manager.small_height+2], fill=Colors.BLACK)
-        self.text_on_image(image, "small", version_str, x, y, Colors.RED)
-        
-        self.display_image(image)
+        # Show completion screen
+        self.display_completion(final_elapsed)
         
         # Extra wait for long solves
         if final_elapsed >= 20:
@@ -735,24 +635,24 @@ class PiCubeTimer:
         return final_elapsed
     
     def main(self):
-        """Main loop (exact Pico implementation)"""
+        """Main loop"""
         try:
             while True:
                 scramble = self.generate_scramble(20)
                 self.display_scramble(scramble)
-                self.wait_for_next_scramble()  # 30s timeout on scramble screen, touch-to-wake logic
+                self.wait_for_next_scramble()
                 timer_val = self.timer_control()
                 self.solve_times.append({"time": timer_val, "scramble": scramble})
                 self.save_times(self.solve_times)
                 
-                # Wait for tap of GP19 to show results/averages (touch-to-wake)
+                # Wait for tap of GP19 to show results/averages
                 self.wait_for_touch_or_action(lambda: GPIO.input(NEXT_PIN))
                 while GPIO.input(NEXT_PIN):
                     self.sleep_ms(10)
                 
                 self.display_results_and_avgs(timer_val, self.solve_times)
                 
-                # Wait for tap of GP19 (clear) or GP15 (exit), touch-to-wake
+                # Wait for tap of GP19 (clear) or GP15 (exit)
                 action = self.wait_for_next_with_results()
                 
                 if action == "exit":
@@ -823,7 +723,10 @@ if __name__ == "__main__":
     print("   ST7789 Display:")
     print("     VCC -> 3.3V, GND -> GND")
     print("     SCL -> GPIO 11 (SCLK), SDA -> GPIO 10 (MOSI)")
-    print("     RES -> GPIO 25, DC -> GPIO 24, BLK -> GPIO 23, CS -> GPIO 8 (CE0)")
+    print("     RES -> GPIO 25, DC -> GPIO 24, CS -> GPIO 8 (CE0)")
+    print("")
+    print("📦 Required packages:")
+    print("   pip3 install luma.lcd RPi.GPIO pillow")
     print("")
     
     timer = PiCubeTimer()
