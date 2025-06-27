@@ -20,8 +20,9 @@ import time
 import random
 import json
 import os
-from datetime import datetime
-import sys
+from pathlib import Path
+#from datetime import datetime
+#import sys
 
 # GPIO libraries for Pi
 import RPi.GPIO as GPIO
@@ -58,7 +59,7 @@ faces = ['U', 'D', 'L', 'R', 'F', 'B']
 modifiers = ['', "'", '2']
 opposite = {'U':'D', 'D':'U', 'L':'R', 'R':'L', 'F':'B', 'B':'F'}
 
-RESULTS_FILE = "cube_times.json"
+RESULTS_FILE = os.path.expanduser("~/.raspicube/cube_times.json")
 
 # Backlight management (same as Pico)
 BACKLIGHT_TIMEOUT_MS = 20000
@@ -96,18 +97,23 @@ class FontManager:
 
 class PiCubeTimer:
     def __init__(self):
-        # Initialize components
+        # Create the directory if it doesn't exist
+        results_dir = os.path.dirname(RESULTS_FILE)
+        Path(results_dir).mkdir(parents=True, exist_ok=True)
+        
+        # Rest of initialization remains the same
         self.setup_gpio()
         self.setup_display()
         self.font_manager = FontManager()
         self.setup_timer_buffer()
         
-        # State management
+        # State management with better error handling
         self.solve_times = self.load_times()
         self.last_touch_time = self.ticks_ms()
         self.backlight_on = True
         
         print("🚀 RasPiCube Timer initialized!")
+        print(f"📝 Results file: {RESULTS_FILE}")
     
     def setup_gpio(self):
         """Initialize GPIO pins"""
@@ -236,30 +242,71 @@ class PiCubeTimer:
         """Check if any button is pressed"""
         return GPIO.input(TIMER_PIN) or GPIO.input(NEXT_PIN)
     
-    # Core timer functions (same as original)
+    # Core timer functions
     def load_times(self):
-        """Load solve times from file"""
+        """Load solve times from file with better error handling"""
         try:
-            with open(RESULTS_FILE, "r") as f:
-                return json.load(f)
-        except:
+            if os.path.exists(RESULTS_FILE):
+                with open(RESULTS_FILE, "r") as f:
+                    return json.load(f)
+            else:
+                print(f"⚠️ No existing results file found at {RESULTS_FILE}")
+                return []
+        except json.JSONDecodeError as e:
+            print(f"⚠️ Error reading results file: Invalid JSON format - {e}")
+            # Backup corrupted file
+            if os.path.exists(RESULTS_FILE):
+                backup = f"{RESULTS_FILE}.bak"
+                try:
+                    os.rename(RESULTS_FILE, backup)
+                    print(f"📦 Corrupted file backed up to {backup}")
+                except OSError as e:
+                    print(f"❌ Failed to backup corrupted file: {e}")
             return []
-    
-    def save_times(self, times):
-        """Save solve times to file"""
-        try:
-            with open(RESULTS_FILE, "w") as f:
-                json.dump(times, f, indent=2)
+        except OSError as e:
+            print(f"⚠️ Error accessing results file: {e}")
+            return []
         except Exception as e:
-            print(f"Error saving times: {e}")
-    
-    def clear_times(self):
-        """Clear all solve times"""
+            print(f"⚠️ Unexpected error loading results: {e}")
+            return []
+
+    def save_times(self, times):
+        """Save solve times to file with better error handling"""
         try:
+            # Create temp file
+            temp_file = f"{RESULTS_FILE}.tmp"
+            with open(temp_file, "w") as f:
+                json.dump(times, f, indent=2)
+            
+            # Atomic replace
+            if os.name == 'nt':  # Windows
+                if os.path.exists(RESULTS_FILE):
+                    os.remove(RESULTS_FILE)
+            os.rename(temp_file, RESULTS_FILE)
+            
+        except OSError as e:
+            print(f"❌ Error saving times: {e}")
+            if os.path.exists(temp_file):
+                try:
+                    os.remove(temp_file)
+                except:
+                    pass
+        except Exception as e:
+            print(f"❌ Unexpected error saving times: {e}")
+            if os.path.exists(temp_file):
+                try:
+                    os.remove(temp_file)
+                except:
+                    pass
+
+    def clear_times(self):
+        """Clear all solve times with better error handling"""
+        try:
+            # Save empty list
             with open(RESULTS_FILE, "w") as f:
                 json.dump([], f)
         except Exception as e:
-            print(e)
+            print(f"❌ Error clearing times: {e}")
     
     def generate_scramble(self, n_moves=20):
         """Generate a random Rubik's cube scramble"""
