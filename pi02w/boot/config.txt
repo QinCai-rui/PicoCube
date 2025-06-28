@@ -51,3 +51,7 @@ dtoverlay=dwc2,dr_mode=host
 [all]
 dtoverlay=dwc2
 dtoverlay=disable-wifi
+arm_freq=1150
+arm_freq_min=900
+arm_boost=1
+over_voltage=2
