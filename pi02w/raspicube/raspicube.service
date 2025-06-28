@@ -4,7 +4,7 @@ Description=RasPiCube Timer (User Level)
 [Service]
 Type=simple
 WorkingDirectory=/home/qincai/raspicube/pi02w/raspicube
-ExecStartPre=/usr/bin/git pull
+ExecStartPre=/usr/bin/git pull || true
 ExecStart=/usr/bin/python3 /home/qincai/raspicube/pi02w/raspicube/raspicube.py
 Restart=always
 RestartSec=10
