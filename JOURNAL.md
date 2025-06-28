@@ -5,7 +5,7 @@ description: "A Raspberry Pi powered Rubik's cube timer and scramble generator"
 created_at: "2025-05-16"
 ---
 
-**TOTAL TIME:** about 11 hours
+**TOTAL TIME:** 35 hours
 
 ## 16/5/25
 
@@ -206,3 +206,47 @@ Time spent this session: **7 hours** (including the time unboxing the stuff, tes
 For this session, I fixed most of the bugs introduced by the previous session. For example, there is the issue that the timer does not start when the user releases the touch sensor, but only when the user presses it. This is not ideal, since the user might accidentally release the touch sensor before they are ready to start the timer. I fixed this by adding a delay of 0.4 seconds before starting the timer, so that the user has time to get ready.
 
 Time spent this session: **2 hours** (including the time to test the program on the Pico and fix the bugs)
+
+--------------------
+
+## 25/6/25 - 28/6/25
+
+### Update 1/15
+
+These sessions were spent on soldering the header pins onto the Raspberry Pi Zero 2W, downloading the latest Raspberry Pi OS, and setting up the Pi Zero 2W. I also had to install the necessary libraries and dependencies for the program to run. This took a lot of time, since I had to figure out how to do it on a headless Raspberry Pi, without a monitor or keyboard. I had to use SSH to connect to the Pi and run the commands. Good thing I enabled SSH on the Pi before I started, otherwise I would have been stuck; I also enabled the `rc-local` service to run commands on boot, just in case, you never know. I also configured Ethernet Gadget mode, so that I can connect the Pi to my computer via USB and access the internet. This is very useful, since I don't have a monitor or keyboard for the Pi. Unfortunately I could not figure out how to make a bridge network between the Pi and my Linux computer, so internet access is not available on the Pi. I will have to figure that out later.
+
+Time spent this session: **4 hours** (including the time to solder the header pins, download the Raspberry Pi OS, and set up the Pi Zero 2W)
+
+---------------------
+
+### Update 2/16
+
+Since I ordered a USB WiFi adapter, I connected it to the Pi, and, surprisingly, it worked out of the box. I was able to connect to my WiFi network and access the internet. This is very useful, since I can now update the Pi and install the necessary libraries and dependencies for the program to run. I also installed the `git` command, so that I can clone the repository and run the program on the Pi. Some more libraries also had to be installed, but the pi02w is sooooo slow that it took like 30 minutes to install the libraries using `pip`. `btop` later showed that the Pi's CPU only goes up to 700MHz for some reason, even though I set the `arm_freq` to 1150MHz in the `config.txt` file. So I had to set the `arm_freq_min` option to `900` in the `config.txt` file, which allows the Pi to run at full speed all the time. This is not ideal, since it will drain power faster, but I don't have a choice.
+
+Time spent this session: **2 hours** (including the time to connect the USB WiFi adapter, update the Pi, and install the necessary libraries and dependencies)
+
+---------------------
+
+### Update 3/17
+
+I spent this session working on the program itself. I had to modify the program to work with the Raspberry Pi Zero 2W, since it has a different pin allocation and different libraries. I also had to modify the program to work with the Waveshare 2-inch IPS LCD Display, since it has a different library and different functions. I had to figure out how to use the `st7789` library to display text and images on the screen. 
+
+For some reason, the `st7789` library did not do anything to the screen, so I had to switch to the `luma.lcd` library, which is a more general library for LCD displays. I had to modify the program to use the `luma.lcd` library instead of the `st7789` library, and it worked! I was able to display text and images on the screen, and the touch sensors weer working as expected. 
+
+Time spent this session: **4 hours** (including the time to modify the program to work with the Raspberry Pi Zero 2W and the Waveshare 2-inch IPS LCD Display)
+
+---------------------
+
+### Update 4/18
+
+This session was all about testing. Soo I did a bunch of solves :))
+
+![systemctl log](assets/systemctl_log.png)
+
+Unfortunately, if I unplug the USB WiFi adapter, the Pi will not be able to connect to the internet, since it does not have a built-in WiFi adapter that supports 5Ghz band. Therefore the `ExecStartPre` command (`git pull`) in the `systemd` service file will not work, and the service will not continue to start.
+
+![git pull error](assets/git_failed.png)
+
+I had to modify the `systemd` service file make the `ExecStartPre` command always exit 0, no matter what.
+
+Time spent this session: **5 hours**
