@@ -55,3 +55,4 @@ arm_freq=1150
 arm_freq_min=900
 arm_boost=1
 over_voltage=2
+gpu_mem=16
