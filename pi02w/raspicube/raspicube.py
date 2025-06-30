@@ -22,7 +22,8 @@ import json
 import os
 import logging
 from pathlib import Path
-import subprocess  # <-- for shutdown
+# from datetime import datetime
+# import sys
 
 # Set up logging so systemd and journalctl will capture the output
 logging.basicConfig(
@@ -40,7 +41,7 @@ from luma.core.render import canvas
 from luma.lcd.device import st7789
 from PIL import Image, ImageDraw, ImageFont
 
-VERSION = "v1.8.1-rpi"
+VERSION = "v1.7.1-rpi"
 
 # GPIO Pin definitions (BCM numbering)
 TIMER_PIN = 26
@@ -121,7 +122,7 @@ class PiCubeTimer:
         
         logger.info("🚀 RasPiCube Timer initialized!")
         logger.info(f"📝 Results file: {RESULTS_FILE}")
-
+    
     def setup_gpio(self):
         """Initialize GPIO pins"""
         GPIO.setwarnings(False)
@@ -147,7 +148,7 @@ class PiCubeTimer:
         except Exception as e:
             logger.error(f"❌ Failed to initialize display: {e}")
             self.device = None
-
+    
     def setup_timer_buffer(self):
         """Create persistent buffer for fast timer updates"""
         self.timer_buffer = Image.new('RGB', (DISPLAY_WIDTH, DISPLAY_HEIGHT), Colors.BLACK)
@@ -394,73 +395,7 @@ class PiCubeTimer:
         
         self.create_display_image(draw_scramble)
         logger.info(f"🎲 Scramble: {scramble}")
-
-    def display_shutdown_confirm(self):
-        """Display shutdown confirmation dialog"""
-        def draw_confirm(draw):
-            msg = "Shutdown Pi?"
-            msg_bbox = draw.textbbox((0, 0), msg, font=self.font_manager.big_font)
-            msg_width = msg_bbox[2] - msg_bbox[0]
-            x_msg = max(0, (DISPLAY_WIDTH - msg_width) // 2)
-            self.draw_text(draw, msg, x_msg, 60, self.font_manager.big_font, Colors.RED)
-
-            msg2 = "GP19: Yes   GP26: Cancel"
-            msg2_bbox = draw.textbbox((0, 0), msg2, font=self.font_manager.small_font)
-            msg2_width = msg2_bbox[2] - msg2_bbox[0]
-            x_msg2 = max(0, (DISPLAY_WIDTH - msg2_width) // 2)
-            self.draw_text(draw, msg2, x_msg2, 130, self.font_manager.small_font, Colors.MAGENTA)
-
-            # Version
-            version_bbox = draw.textbbox((0, 0), VERSION, font=self.font_manager.small_font)
-            version_width = version_bbox[2] - version_bbox[0]
-            x_version = DISPLAY_WIDTH - version_width - 10
-            y_version = DISPLAY_HEIGHT - 25
-            self.draw_text(draw, VERSION, x_version, y_version, self.font_manager.small_font, Colors.RED)
-
-        self.create_display_image(draw_confirm)
-        logger.info("❓ Shutdown confirmation dialog shown.")
-
-    def wait_for_shutdown_confirm(self):
-        """Wait for confirmation. Returns 'shutdown' or 'cancel'"""
-        while True:
-            self.check_backlight_timeout()
-            if GPIO.input(NEXT_PIN):
-                self.update_touch_time()
-                if not self.backlight_on:
-                    while GPIO.input(NEXT_PIN):
-                        self.sleep_ms(10)
-                    continue
-                while GPIO.input(NEXT_PIN):
-                    self.sleep_ms(10)
-                return "shutdown"
-            if GPIO.input(TIMER_PIN):
-                self.update_touch_time()
-                if not self.backlight_on:
-                    while GPIO.input(TIMER_PIN):
-                        self.sleep_ms(10)
-                    continue
-                while GPIO.input(TIMER_PIN):
-                    self.sleep_ms(10)
-                return "cancel"
-            self.sleep_ms(10)
-
-    def shutdown_pi(self):
-        """Shutdown the Raspberry Pi cleanly"""
-        logger.info("⚡ Shutting down the Pi NOW!")
-        # Show a final message before shutdown
-        def draw_shutdown(draw):
-            msg = "Shutting down..."
-            msg_bbox = draw.textbbox((0, 0), msg, font=self.font_manager.big_font)
-            msg_width = msg_bbox[2] - msg_bbox[0]
-            x_msg = max(0, (DISPLAY_WIDTH - msg_width) // 2)
-            self.draw_text(draw, msg, x_msg, 100, self.font_manager.big_font, Colors.RED)
-        self.create_display_image(draw_shutdown)
-        self.sleep_ms(800)
-        try:
-            subprocess.Popen(["sudo", "shutdown", "now"])
-        except Exception as e:
-            logger.error(f"❌ Failed to shutdown: {e}")
-
+    
     def display_timer(self, time_val, running=True):
         """Display timer (fallback for non-optimized screens)"""
         def draw_timer(draw):
@@ -641,53 +576,14 @@ class PiCubeTimer:
                     self.sleep_ms(10)
                 return
             self.sleep_ms(10)
-
+    
     def wait_for_next_scramble(self):
-        """Wait for either pin to be pressed (30s timeout on scramble screen), or long press GP19 for shutdown."""
-        LONG_PRESS_MS = 1500  # 1.5 seconds for shutdown
-        check_interval = 20   # ms
-
-        press_start = None
-        while True:
-            self.check_backlight_timeout(SCRAMBLE_BACKLIGHT_TIMEOUT_MS)
-
-            timer_pin = GPIO.input(TIMER_PIN)
-            next_pin = GPIO.input(NEXT_PIN)
-
-            # Long press detection for GP19
-            if next_pin:
-                if press_start is None:
-                    press_start = self.ticks_ms()
-                elif self.ticks_diff(self.ticks_ms(), press_start) > LONG_PRESS_MS:
-                    # Confirm shutdown
-                    self.display_shutdown_confirm()
-                    confirm = self.wait_for_shutdown_confirm()
-                    if confirm == "shutdown":
-                        self.shutdown_pi()
-                        # Wait here until shutdown.
-                        while True:
-                            self.sleep_ms(1000)
-                    else:
-                        # Cancel: return to scramble screen, but don't exit
-                        self.display_scramble(self.last_scramble_for_shutdown_cancel)
-                        press_start = None
-                        continue
-            else:
-                press_start = None
-
-            if timer_pin or next_pin:
-                self.update_touch_time()
-                if not self.backlight_on:
-                    # Wake the screen, but do NOT trigger the action
-                    while GPIO.input(TIMER_PIN) or GPIO.input(NEXT_PIN):
-                        self.sleep_ms(10)
-                    continue
-                # Backlight is on, so this is a real action (only if not a shutdown long press)
-                while GPIO.input(TIMER_PIN) or GPIO.input(NEXT_PIN):
-                    self.sleep_ms(10)
-                return
-            self.sleep_ms(check_interval)
-
+        """Wait for either pin to be pressed (30s timeout on scramble screen)"""
+        self.wait_for_touch_or_action(
+            lambda: GPIO.input(NEXT_PIN) or GPIO.input(TIMER_PIN),
+            backlight_timeout=SCRAMBLE_BACKLIGHT_TIMEOUT_MS
+        )
+    
     def wait_for_next(self):
         """Wait for either pin to be pressed (default timeout)"""
         self.wait_for_touch_or_action(
@@ -839,7 +735,6 @@ class PiCubeTimer:
         try:
             while True:
                 scramble = self.generate_scramble(20)
-                self.last_scramble_for_shutdown_cancel = scramble  # For redraw after shutdown cancel
                 self.display_scramble(scramble)
                 self.wait_for_next_scramble()
                 timer_val = self.timer_control()
