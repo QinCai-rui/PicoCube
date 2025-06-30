@@ -1,6 +1,7 @@
 from luma.core.interface.serial import i2c
 from luma.oled.device import ssd1306
 from PIL import Image, ImageDraw, ImageFont
+from time import sleep
 
 # --- OLED Setup ---
 I2C_PORT = 1
