@@ -64,7 +64,7 @@ def main():
                 show_shutdown_notice()
                 time.sleep(0.7)
                 logging.info("Calling system shutdown.")
-                subprocess.Popen(["systemctl", "poweroff"])
+                subprocess.Popen(["sudo", "systemctl", "poweroff"])
                 break
             time.sleep(0.05)
     except Exception as e:
