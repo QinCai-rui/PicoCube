@@ -3,7 +3,7 @@ Description=OLED Shutdown Button Service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /home/qincai/raspicube/raspicube/oled_shutdown.py
+ExecStart=/usr/bin/python3 /home/qincai/raspicube/pi02w/raspicube/oled_shutdown.py
 Restart=on-failure
 WorkingDirectory=/home/qincai/raspicube
 StandardOutput=journal
