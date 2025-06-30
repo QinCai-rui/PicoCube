@@ -40,4 +40,4 @@ def show_shutdown_notice():
 
 if __name__ == "__main__":
     show_shutdown_notice()
-    sleep(2)  # Keep the message displayed for a while
+    sleep(5)  # Keep the message displayed for a while
