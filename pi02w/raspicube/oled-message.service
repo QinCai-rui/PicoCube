@@ -1,0 +1,13 @@
+[Unit]
+Description=Display shutdown message on OLED
+DefaultDependencies=no
+Before=shutdown.target reboot.target halt.target
+Conflicts=shutdown.target reboot.target halt.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /home/qincai/raspicube/pi02w/raspicube/oled_message.py
+TimeoutStartSec=30
+
+[Install]
+WantedBy=shutdown.target reboot.target halt.target
