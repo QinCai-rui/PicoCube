@@ -1,10 +1,13 @@
 [Unit]
-Description=RasPiCube Timer (User Level)
+Description=RasPiCube Timer (System Level, User: qincai)
 After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
 WorkingDirectory=/home/qincai/raspicube/pi02w/raspicube
+User=qincai
+Group=qincai
 ExecStartPre=-/usr/bin/git pull
 ExecStart=/usr/bin/python3 /home/qincai/raspicube/pi02w/raspicube/raspicube.py
 Restart=always
