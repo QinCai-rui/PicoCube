@@ -49,7 +49,7 @@ def main():
             if GPIO.input(SHUTDOWN_PIN):
                 logging.info("Button pressed on GPIO27! Initiating shutdown...")
                 show_shutdown_notice()
-                time.sleep(1)  # Give time for display update
+                time.sleep(2)  # Give time for display update
                 logging.info("Calling system shutdown.")
                 subprocess.Popen(["sudo", "systemctl", "poweroff"])
                 break
