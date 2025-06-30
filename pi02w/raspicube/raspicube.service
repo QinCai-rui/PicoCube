@@ -1,6 +1,6 @@
 [Unit]
 Description=RasPiCube Timer (User Level)
-Requires=button-shutdown.service
+#Requires=button-shutdown.service
 
 [Service]
 Type=simple
