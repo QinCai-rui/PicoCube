@@ -1,6 +1,6 @@
 [Unit]
 Description=RasPiCube Timer (User Level)
-After=network.target
+After=network-online.target
 
 [Service]
 Type=simple
